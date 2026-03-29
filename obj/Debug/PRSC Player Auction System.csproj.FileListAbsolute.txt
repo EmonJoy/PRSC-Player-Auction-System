@@ -864,5 +864,9 @@ D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction Sys
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x86\plugins\visualization\libgoom_plugin.dll
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x86\plugins\visualization\libprojectm_plugin.dll
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x86\plugins\visualization\libvisual_plugin.dll
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.MainForm.resources
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.AddPlayerForm.resources
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\BouncyCastle.Cryptography.dll
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\itextsharp.dll
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\BouncyCastle.Cryptography.xml
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\itextsharp.xml
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.TeamReportForm.resources

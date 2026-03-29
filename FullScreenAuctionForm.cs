@@ -645,5 +645,23 @@ namespace PRSC_Player_Auction_System
             }
             base.Dispose(disposing);
         }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // FullScreenAuctionForm
+            // 
+            this.ClientSize = new System.Drawing.Size(921, 621);
+            this.Name = "FullScreenAuctionForm";
+            this.Load += new System.EventHandler(this.FullScreenAuctionForm_Load);
+            this.ResumeLayout(false);
+
+        }
+
+        private void FullScreenAuctionForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

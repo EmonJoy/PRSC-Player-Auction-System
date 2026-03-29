@@ -4,14 +4,7 @@ using System.Data.SqlClient;
 
 namespace PRSC_Player_Auction_System
 {
-    /// <summary>
-    /// All DB operations. Change connectionString to match your SQL Server instance.
-    /// Table schema expected:
-    ///   Players(Id INT PK IDENTITY, Name NVARCHAR, Position NVARCHAR, SkillLevel NVARCHAR,
-    ///           BasePrice DECIMAL, SoldPrice DECIMAL, AssignedTeam NVARCHAR,
-    ///           IsSold BIT, VideoPath NVARCHAR NULL)
-    ///   Settings(SettingName NVARCHAR PK, SettingValue NVARCHAR)
-    /// </summary>
+
     public static class DatabaseHelper
     {
         // ── Change server name here if needed ──────────────────────────

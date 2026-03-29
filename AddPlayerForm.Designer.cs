@@ -32,178 +32,250 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-
-            // ── Header label (title banner) ──────────────────────────────
             this.lblHeader = new System.Windows.Forms.Label();
-            this.lblHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblHeader.Height = 48;
-            this.lblHeader.Text = "ADD / EDIT PLAYER";
-            this.lblHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblHeader.Font = new System.Drawing.Font("Impact", 16F);
-            this.lblHeader.ForeColor = System.Drawing.Color.FromArgb(50, 205, 50);
-            this.lblHeader.BackColor = System.Drawing.Color.FromArgb(8, 8, 8);
-
-            // ── lblName ──────────────────────────────────────────────────
+            this.SuspendLayout();
+            // 
+            // lblName
+            // 
             this.lblName.AutoSize = true;
+            this.lblName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblName.Location = new System.Drawing.Point(20, 62);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(168, 27);
+            this.lblName.TabIndex = 1;
             this.lblName.Text = "Player Name *";
-            this.lblName.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── txtName ──────────────────────────────────────────────────
-            this.txtName.Location = new System.Drawing.Point(170, 58);
-            this.txtName.Size = new System.Drawing.Size(270, 26);
-            this.txtName.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.txtName.ForeColor = System.Drawing.Color.White;
+            // 
+            // txtName
+            // 
+            this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-
-            // ── lblPosition ──────────────────────────────────────────────
+            this.txtName.ForeColor = System.Drawing.Color.White;
+            this.txtName.Location = new System.Drawing.Point(170, 58);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(270, 34);
+            this.txtName.TabIndex = 2;
+            // 
+            // lblPosition
+            // 
             this.lblPosition.AutoSize = true;
+            this.lblPosition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblPosition.Location = new System.Drawing.Point(20, 104);
+            this.lblPosition.Name = "lblPosition";
+            this.lblPosition.Size = new System.Drawing.Size(108, 27);
+            this.lblPosition.TabIndex = 3;
             this.lblPosition.Text = "Position";
-            this.lblPosition.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── txtPosition ──────────────────────────────────────────────
-            this.txtPosition.Location = new System.Drawing.Point(170, 100);
-            this.txtPosition.Size = new System.Drawing.Size(270, 26);
-            this.txtPosition.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.txtPosition.ForeColor = System.Drawing.Color.White;
+            // 
+            // txtPosition
+            // 
+            this.txtPosition.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.txtPosition.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-
-            // ── lblSkill ─────────────────────────────────────────────────
+            this.txtPosition.ForeColor = System.Drawing.Color.White;
+            this.txtPosition.Location = new System.Drawing.Point(170, 100);
+            this.txtPosition.Name = "txtPosition";
+            this.txtPosition.Size = new System.Drawing.Size(270, 34);
+            this.txtPosition.TabIndex = 4;
+            // 
+            // lblSkill
+            // 
             this.lblSkill.AutoSize = true;
+            this.lblSkill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblSkill.Location = new System.Drawing.Point(20, 146);
+            this.lblSkill.Name = "lblSkill";
+            this.lblSkill.Size = new System.Drawing.Size(144, 27);
+            this.lblSkill.TabIndex = 5;
             this.lblSkill.Text = "Skill Level";
-            this.lblSkill.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── cmbSkill ─────────────────────────────────────────────────
-            this.cmbSkill.Location = new System.Drawing.Point(170, 142);
-            this.cmbSkill.Size = new System.Drawing.Size(270, 26);
-            this.cmbSkill.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.cmbSkill.ForeColor = System.Drawing.Color.White;
+            // 
+            // cmbSkill
+            // 
+            this.cmbSkill.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.cmbSkill.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSkill.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbSkill.Items.AddRange(new object[] { "Low", "Medium", "High", "Elite" });
-            this.cmbSkill.SelectedIndex = 1;
-
-            // ── lblBasePrice ─────────────────────────────────────────────
+            this.cmbSkill.ForeColor = System.Drawing.Color.White;
+            this.cmbSkill.Items.AddRange(new object[] {
+            "Low",
+            "Medium",
+            "High",
+            "Elite"});
+            this.cmbSkill.Location = new System.Drawing.Point(170, 142);
+            this.cmbSkill.Name = "cmbSkill";
+            this.cmbSkill.Size = new System.Drawing.Size(270, 35);
+            this.cmbSkill.TabIndex = 6;
+            // 
+            // lblBasePrice
+            // 
             this.lblBasePrice.AutoSize = true;
+            this.lblBasePrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblBasePrice.Location = new System.Drawing.Point(20, 188);
+            this.lblBasePrice.Name = "lblBasePrice";
+            this.lblBasePrice.Size = new System.Drawing.Size(168, 27);
+            this.lblBasePrice.TabIndex = 7;
             this.lblBasePrice.Text = "Base Price (৳)";
-            this.lblBasePrice.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── txtBasePrice ─────────────────────────────────────────────
-            this.txtBasePrice.Location = new System.Drawing.Point(170, 184);
-            this.txtBasePrice.Size = new System.Drawing.Size(270, 26);
-            this.txtBasePrice.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.txtBasePrice.ForeColor = System.Drawing.Color.White;
+            // 
+            // txtBasePrice
+            // 
+            this.txtBasePrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.txtBasePrice.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtBasePrice.ForeColor = System.Drawing.Color.White;
+            this.txtBasePrice.Location = new System.Drawing.Point(170, 184);
+            this.txtBasePrice.Name = "txtBasePrice";
+            this.txtBasePrice.Size = new System.Drawing.Size(270, 34);
+            this.txtBasePrice.TabIndex = 8;
             this.txtBasePrice.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-
-            // ── lblSoldPrice ─────────────────────────────────────────────
+            // 
+            // lblSoldPrice
+            // 
             this.lblSoldPrice.AutoSize = true;
+            this.lblSoldPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblSoldPrice.Location = new System.Drawing.Point(20, 230);
+            this.lblSoldPrice.Name = "lblSoldPrice";
+            this.lblSoldPrice.Size = new System.Drawing.Size(168, 27);
+            this.lblSoldPrice.TabIndex = 9;
             this.lblSoldPrice.Text = "Sold Price (৳)";
-            this.lblSoldPrice.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── txtSoldPrice ─────────────────────────────────────────────
-            this.txtSoldPrice.Location = new System.Drawing.Point(170, 226);
-            this.txtSoldPrice.Size = new System.Drawing.Size(270, 26);
-            this.txtSoldPrice.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.txtSoldPrice.ForeColor = System.Drawing.Color.White;
+            // 
+            // txtSoldPrice
+            // 
+            this.txtSoldPrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.txtSoldPrice.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSoldPrice.ForeColor = System.Drawing.Color.White;
+            this.txtSoldPrice.Location = new System.Drawing.Point(170, 226);
+            this.txtSoldPrice.Name = "txtSoldPrice";
+            this.txtSoldPrice.Size = new System.Drawing.Size(270, 34);
+            this.txtSoldPrice.TabIndex = 10;
             this.txtSoldPrice.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-
-            // ── lblTeam ──────────────────────────────────────────────────
+            // 
+            // lblTeam
+            // 
             this.lblTeam.AutoSize = true;
+            this.lblTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblTeam.Location = new System.Drawing.Point(20, 272);
+            this.lblTeam.Name = "lblTeam";
+            this.lblTeam.Size = new System.Drawing.Size(168, 27);
+            this.lblTeam.TabIndex = 11;
             this.lblTeam.Text = "Assigned Team";
-            this.lblTeam.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── cmbTeam ──────────────────────────────────────────────────
-            this.cmbTeam.Location = new System.Drawing.Point(170, 268);
-            this.cmbTeam.Size = new System.Drawing.Size(270, 26);
-            this.cmbTeam.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.cmbTeam.ForeColor = System.Drawing.Color.White;
+            // 
+            // cmbTeam
+            // 
+            this.cmbTeam.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.cmbTeam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTeam.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTeam.Items.AddRange(new object[] { "—", "Team Alpha", "Team Beta" });
-            this.cmbTeam.SelectedIndex = 0;
-
-            // ── lblStatus ────────────────────────────────────────────────
+            this.cmbTeam.ForeColor = System.Drawing.Color.White;
+            this.cmbTeam.Items.AddRange(new object[] {
+            "—",
+            "Team Alpha",
+            "Team Beta"});
+            this.cmbTeam.Location = new System.Drawing.Point(170, 268);
+            this.cmbTeam.Name = "cmbTeam";
+            this.cmbTeam.Size = new System.Drawing.Size(270, 35);
+            this.cmbTeam.TabIndex = 12;
+            // 
+            // lblStatus
+            // 
             this.lblStatus.AutoSize = true;
+            this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblStatus.Location = new System.Drawing.Point(20, 314);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(84, 27);
+            this.lblStatus.TabIndex = 13;
             this.lblStatus.Text = "Status";
-            this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── cmbStatus ────────────────────────────────────────────────
-            this.cmbStatus.Location = new System.Drawing.Point(170, 310);
-            this.cmbStatus.Size = new System.Drawing.Size(270, 26);
-            this.cmbStatus.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.cmbStatus.ForeColor = System.Drawing.Color.White;
+            // 
+            // cmbStatus
+            // 
+            this.cmbStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.cmbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbStatus.Items.AddRange(new object[] { "Available", "Sold" });
-            this.cmbStatus.SelectedIndex = 0;
-
-            // ── lblVideoPath ─────────────────────────────────────────────
+            this.cmbStatus.ForeColor = System.Drawing.Color.White;
+            this.cmbStatus.Items.AddRange(new object[] {
+            "Available",
+            "Sold"});
+            this.cmbStatus.Location = new System.Drawing.Point(170, 310);
+            this.cmbStatus.Name = "cmbStatus";
+            this.cmbStatus.Size = new System.Drawing.Size(270, 35);
+            this.cmbStatus.TabIndex = 14;
+            // 
+            // lblVideoPath
+            // 
             this.lblVideoPath.AutoSize = true;
+            this.lblVideoPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
             this.lblVideoPath.Location = new System.Drawing.Point(20, 356);
+            this.lblVideoPath.Name = "lblVideoPath";
+            this.lblVideoPath.Size = new System.Drawing.Size(132, 27);
+            this.lblVideoPath.TabIndex = 15;
             this.lblVideoPath.Text = "Video Path";
-            this.lblVideoPath.ForeColor = System.Drawing.Color.FromArgb(170, 170, 170);
-
-            // ── txtVideoPath ─────────────────────────────────────────────
-            this.txtVideoPath.Location = new System.Drawing.Point(170, 352);
-            this.txtVideoPath.Size = new System.Drawing.Size(228, 26);
-            this.txtVideoPath.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.txtVideoPath.ForeColor = System.Drawing.Color.White;
+            // 
+            // txtVideoPath
+            // 
+            this.txtVideoPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.txtVideoPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-
-            // ── btnBrowse ────────────────────────────────────────────────
-            this.btnBrowse.Location = new System.Drawing.Point(406, 350);
-            this.btnBrowse.Size = new System.Drawing.Size(34, 28);
-            this.btnBrowse.Text = "…";
-            this.btnBrowse.BackColor = System.Drawing.Color.FromArgb(60, 60, 60);
-            this.btnBrowse.ForeColor = System.Drawing.Color.White;
-            this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.txtVideoPath.ForeColor = System.Drawing.Color.White;
+            this.txtVideoPath.Location = new System.Drawing.Point(170, 352);
+            this.txtVideoPath.Name = "txtVideoPath";
+            this.txtVideoPath.Size = new System.Drawing.Size(228, 34);
+            this.txtVideoPath.TabIndex = 16;
+            // 
+            // btnBrowse
+            // 
+            this.btnBrowse.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
             this.btnBrowse.FlatAppearance.BorderSize = 0;
+            this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBrowse.ForeColor = System.Drawing.Color.White;
+            this.btnBrowse.Location = new System.Drawing.Point(406, 350);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(34, 28);
+            this.btnBrowse.TabIndex = 17;
+            this.btnBrowse.Text = "…";
+            this.btnBrowse.UseVisualStyleBackColor = false;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-
-            // ── btnSave ──────────────────────────────────────────────────
-            this.btnSave.Location = new System.Drawing.Point(170, 400);
-            this.btnSave.Size = new System.Drawing.Size(125, 38);
-            this.btnSave.Text = "✔  Save";
-            this.btnSave.BackColor = System.Drawing.Color.FromArgb(34, 139, 34);
-            this.btnSave.ForeColor = System.Drawing.Color.White;
+            // 
+            // btnSave
+            // 
+            this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(139)))), ((int)(((byte)(34)))));
+            this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnSave.FlatAppearance.BorderSize = 0;
-            this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnSave.ForeColor = System.Drawing.Color.White;
+            this.btnSave.Location = new System.Drawing.Point(170, 400);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(125, 38);
+            this.btnSave.TabIndex = 18;
+            this.btnSave.Text = "✔  Save";
+            this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-
-            // ── btnCancel ────────────────────────────────────────────────
-            this.btnCancel.Location = new System.Drawing.Point(305, 400);
-            this.btnCancel.Size = new System.Drawing.Size(125, 38);
-            this.btnCancel.Text = "✖  Cancel";
-            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(120, 30, 30);
-            this.btnCancel.ForeColor = System.Drawing.Color.White;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.FlatAppearance.BorderSize = 0;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnCancel.FlatAppearance.BorderSize = 0;
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-
-            // ── Form ─────────────────────────────────────────────────────
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.btnCancel.ForeColor = System.Drawing.Color.White;
+            this.btnCancel.Location = new System.Drawing.Point(305, 400);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(125, 38);
+            this.btnCancel.TabIndex = 19;
+            this.btnCancel.Text = "✖  Cancel";
+            this.btnCancel.UseVisualStyleBackColor = false;
+            // 
+            // lblHeader
+            // 
+            this.lblHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(8)))), ((int)(((byte)(8)))));
+            this.lblHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblHeader.Font = new System.Drawing.Font("Impact", 16F);
+            this.lblHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(205)))), ((int)(((byte)(50)))));
+            this.lblHeader.Location = new System.Drawing.Point(0, 0);
+            this.lblHeader.Name = "lblHeader";
+            this.lblHeader.Size = new System.Drawing.Size(500, 48);
+            this.lblHeader.TabIndex = 0;
+            this.lblHeader.Text = "ADD / EDIT PLAYER";
+            this.lblHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // AddPlayerForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 27F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(460, 455);
-            this.BackColor = System.Drawing.Color.FromArgb(18, 18, 18);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add / Edit Player";
-            this.Font = new System.Drawing.Font("Segoe UI", 10F);
-
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(18)))), ((int)(((byte)(18)))));
+            this.ClientSize = new System.Drawing.Size(500, 470);
             this.Controls.Add(this.lblHeader);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.txtName);
@@ -224,11 +296,17 @@
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnCancel);
-
+            this.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "AddPlayerForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Add / Edit Player";
             this.Load += new System.EventHandler(this.AddPlayerForm_Load);
-
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         // ── Control declarations ──────────────────────────────────────
