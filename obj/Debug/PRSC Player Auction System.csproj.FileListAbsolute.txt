@@ -1,19 +1,3 @@
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\PRSC Player Auction System.exe.config
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\PRSC Player Auction System.exe
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\PRSC Player Auction System.pdb
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.csproj.AssemblyReference.cache
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.csproj.CoreCompileInputs.cache
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.exe
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.pdb
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.exe.config
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.FullScreenAuctionForm.resources
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.csproj.GenerateResource.cache
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.dll
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.WinForms.dll
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\System.ValueTuple.dll
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.xml
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.WinForms.xml
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Pla.31FD08D4.Up2Date
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x64\libvlc.dll
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x64\libvlc.lib
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x64\libvlccore.dll
@@ -864,9 +848,27 @@ D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction Sys
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x86\plugins\visualization\libgoom_plugin.dll
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x86\plugins\visualization\libprojectm_plugin.dll
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\libvlc\win-x86\plugins\visualization\libvisual_plugin.dll
-D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.AddPlayerForm.resources
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\PRSC_DB_log.ldf
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\PRSC Player Auction System.exe.config
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\PRSC Player Auction System.exe
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\PRSC Player Auction System.pdb
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\BouncyCastle.Cryptography.dll
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\itextsharp.dll
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.dll
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.WinForms.dll
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\System.ValueTuple.dll
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\BouncyCastle.Cryptography.xml
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\itextsharp.xml
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.xml
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\bin\Debug\LibVLCSharp.WinForms.xml
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.csproj.AssemblyReference.cache
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.AddPlayerForm.resources
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.FullScreenAuctionForm.resources
 D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.TeamReportForm.resources
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.csproj.GenerateResource.cache
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.csproj.CoreCompileInputs.cache
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Pla.31FD08D4.Up2Date
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.exe
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.pdb
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC Player Auction System.exe.config
+D:\Codes and Projects\PRSC\PRSC_Player_Auction_System_V7\PRSC Player Auction System\obj\Debug\PRSC_Player_Auction_System.SplashForm.resources

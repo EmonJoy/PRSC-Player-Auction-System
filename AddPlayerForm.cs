@@ -1,55 +1,61 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace PRSC_Player_Auction_System
 {
-    /// <summary>
-    /// Add / Edit player dialog.
-    /// Class is partial — layout lives in AddPlayerForm.Designer.cs
-    /// </summary>
     public partial class AddPlayerForm : Form
     {
-        // ── Public result (set after user clicks Save) ──────────────────
         public Player Result { get; private set; }
-
-        // ── Optional: player being edited ──────────────────────────────
         private readonly Player _existing;
+        private readonly List<string> _teamNames;
 
         // ═══════════════════════════════════════════════════════════════
         //  CONSTRUCTOR
         // ═══════════════════════════════════════════════════════════════
-        public AddPlayerForm(Player existing = null)
+        public AddPlayerForm(Player existing = null, List<string> teamNames = null)
         {
             _existing = existing;
-            InitializeComponent();   // wired to Designer.cs
+            _teamNames = teamNames;
+            InitializeComponent();
 
             if (existing != null)
                 this.Text = "Edit Player";
         }
 
         // ═══════════════════════════════════════════════════════════════
-        //  FORM LOAD  ← required by Designer's Load event hook
+        //  FORM LOAD
         // ═══════════════════════════════════════════════════════════════
         private void AddPlayerForm_Load(object sender, EventArgs e)
         {
+            // ── Populate team dropdown dynamically from MainForm ──
+            cmbTeam.Items.Clear();
+            cmbTeam.Items.Add("");  // blank / unassigned option
+            if (_teamNames != null)
+                foreach (var t in _teamNames)
+                    if (!string.IsNullOrWhiteSpace(t))
+                        cmbTeam.Items.Add(t);
+
             if (_existing == null) return;
 
-            // Pre-fill fields when editing an existing player
+            // Pre-fill fields when editing
             txtName.Text = _existing.Name;
             txtPosition.Text = _existing.Position;
             cmbSkill.Text = _existing.SkillLevel;
             txtBasePrice.Text = _existing.BasePrice > 0
-                                    ? _existing.BasePrice.ToString("N0") : "";
+                                      ? _existing.BasePrice.ToString("N0") : "";
             txtSoldPrice.Text = _existing.SoldPrice > 0
-                                    ? _existing.SoldPrice.ToString("N0") : "";
-            cmbTeam.Text = _existing.AssignedTeam;
+                                      ? _existing.SoldPrice.ToString("N0") : "";
             cmbStatus.Text = _existing.Status;
             txtVideoPath.Text = _existing.VideoPath ?? "";
+
+            // Set team AFTER items are populated so it matches correctly
+            cmbTeam.Text = _existing.AssignedTeam ?? "";
         }
 
         // ═══════════════════════════════════════════════════════════════
-        //  SAVE  ← required by Designer's btnSave.Click event hook
+        //  SAVE
         // ═══════════════════════════════════════════════════════════════
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -57,13 +63,12 @@ namespace PRSC_Player_Auction_System
             {
                 MessageBox.Show("Player name is required.", "Validation",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.DialogResult = DialogResult.None;   // keep form open
+                this.DialogResult = DialogResult.None;
                 return;
             }
 
             Result = new Player
             {
-                // Carry forward Id if editing (MainForm will set it for new players)
                 Id = _existing?.Id ?? 0,
                 Name = txtName.Text.Trim(),
                 Position = txtPosition.Text.Trim(),
@@ -74,11 +79,10 @@ namespace PRSC_Player_Auction_System
                 Status = cmbStatus.Text,
                 VideoPath = txtVideoPath.Text.Trim()
             };
-            // DialogResult.OK is already set on btnSave in Designer — form closes
         }
 
         // ═══════════════════════════════════════════════════════════════
-        //  BROWSE VIDEO  ← required by Designer's btnBrowse.Click event hook
+        //  BROWSE VIDEO
         // ═══════════════════════════════════════════════════════════════
         private void btnBrowse_Click(object sender, EventArgs e)
         {

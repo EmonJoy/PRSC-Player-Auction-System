@@ -3,16 +3,44 @@
   "WorkspaceRootPath": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|d:\\codes and projects\\prsc\\prsc_player_auction_system_v7\\prsc player auction system\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\splashform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:splashform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|d:\\codes and projects\\prsc\\prsc_player_auction_system_v7\\prsc player auction system\\splashform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:splashform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\splashform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:splashform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|d:\\codes and projects\\prsc\\prsc_player_auction_system_v7\\prsc player auction system\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\addplayerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:addplayerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|d:\\codes and projects\\prsc\\prsc_player_auction_system_v7\\prsc player auction system\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\fullscreenauctionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:fullscreenauctionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\addplayerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:addplayerform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\databasehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1B2C3D4-E5F6-4789-9012-34567890ABCD}|PRSC Player Auction System.csproj|solutionrelative:databasehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,39 +63,127 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "MainForm.Designer.cs",
-              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.Designer.cs",
-              "RelativeDocumentMoniker": "MainForm.Designer.cs",
-              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.Designer.cs",
-              "RelativeToolTip": "MainForm.Designer.cs",
-              "ViewState": "AgIAAHUBAAAAAAAAAAAgwJ8BAAABAAAAAAAAAA==",
+              "Title": "SplashForm.Designer.cs",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\SplashForm.Designer.cs",
+              "RelativeDocumentMoniker": "SplashForm.Designer.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\SplashForm.Designer.cs",
+              "RelativeToolTip": "SplashForm.Designer.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAAACsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-29T13:24:08.574Z",
+              "WhenOpened": "2026-04-02T13:55:08.004Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "MainForm.cs",
-              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.cs",
-              "RelativeDocumentMoniker": "MainForm.cs",
-              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.cs",
-              "RelativeToolTip": "MainForm.cs",
-              "ViewState": "AgIAAJYDAAAAAAAAAAAgwMADAAABAAAAAAAAAA==",
+              "Title": "SplashForm.cs",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\SplashForm.cs",
+              "RelativeDocumentMoniker": "SplashForm.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\SplashForm.cs",
+              "RelativeToolTip": "SplashForm.cs",
+              "ViewState": "AgIAAOYBAAAAAAAAAAAiwP8BAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-29T13:23:40.027Z",
+              "WhenOpened": "2026-04-02T13:51:53.843Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "SplashForm.cs [Design]",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\SplashForm.cs",
+              "RelativeDocumentMoniker": "SplashForm.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\SplashForm.cs [Design]",
+              "RelativeToolTip": "SplashForm.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T13:51:51.391Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AddPlayerForm.cs",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\AddPlayerForm.cs",
+              "RelativeDocumentMoniker": "AddPlayerForm.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\AddPlayerForm.cs",
+              "RelativeToolTip": "AddPlayerForm.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T13:34:19.571Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AddPlayerForm.cs [Design]",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\AddPlayerForm.cs",
+              "RelativeDocumentMoniker": "AddPlayerForm.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\AddPlayerForm.cs [Design]",
+              "RelativeToolTip": "AddPlayerForm.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T13:22:47.289Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.cs",
+              "RelativeDocumentMoniker": "MainForm.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.cs",
+              "RelativeToolTip": "MainForm.cs",
+              "ViewState": "AgIAAH4CAAAAAAAAAAAQwJICAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-31T19:47:30.921Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAQwCUAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-31T19:46:37.699Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "FullScreenAuctionForm.cs [Design]",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\FullScreenAuctionForm.cs",
+              "RelativeDocumentMoniker": "FullScreenAuctionForm.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\FullScreenAuctionForm.cs [Design]",
+              "RelativeToolTip": "FullScreenAuctionForm.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T13:22:51.405Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DatabaseHelper.cs",
+              "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\DatabaseHelper.cs",
+              "RelativeDocumentMoniker": "DatabaseHelper.cs",
+              "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\DatabaseHelper.cs",
+              "RelativeToolTip": "DatabaseHelper.cs",
+              "ViewState": "AgIAAOUAAAAAAAAAAAAQwOsAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-31T19:40:10.959Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "MainForm.cs [Design]",
               "DocumentMoniker": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.cs",
               "RelativeDocumentMoniker": "MainForm.cs",
               "ToolTip": "D:\\Codes and Projects\\PRSC\\PRSC_Player_Auction_System_V7\\PRSC Player Auction System\\MainForm.cs [Design]",
               "RelativeToolTip": "MainForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-29T13:23:33.127Z",
+              "WhenOpened": "2026-03-31T19:38:15.971Z",
               "EditorCaption": " [Design]"
             }
           ]

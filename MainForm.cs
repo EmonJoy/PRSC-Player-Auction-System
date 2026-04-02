@@ -15,9 +15,7 @@ using WinRect = System.Drawing.Rectangle;
 
 namespace PRSC_Player_Auction_System
 {
-    // ════════════════════════════════════════════════════════════════════
-    //  TEAM REPORT FORM  — shown when the 📊 icon is clicked
-    // ════════════════════════════════════════════════════════════════════
+
     public class TeamReportForm : Form
     {
         private readonly string _teamName;
@@ -26,7 +24,6 @@ namespace PRSC_Player_Auction_System
         private readonly List<Player> _bought;
         private readonly bool _isTeamA;
 
-        // accent colours
         private readonly Color _accent;
         private readonly Color _panelBg;
         private readonly Color _darkBg = Color.FromArgb(10, 10, 10);
@@ -43,10 +40,11 @@ namespace PRSC_Player_Auction_System
             _bought = bought ?? new List<Player>();
             _isTeamA = isTeamA;
             _accent = isTeamA ? Color.FromArgb(50, 205, 50)
-                                     : Color.FromArgb(100, 149, 237);
+                              : Color.FromArgb(100, 149, 237);
             _panelBg = isTeamA ? Color.FromArgb(0, 40, 0)
-                                     : Color.FromArgb(0, 0, 40);
+                               : Color.FromArgb(0, 0, 40);
 
+            InitializeComponent();  // ← ADD THIS LINE
             BuildUI();
         }
 
@@ -62,7 +60,6 @@ namespace PRSC_Player_Auction_System
 
             decimal spent = _initialFund - _remainingFund;
 
-            // ── Title bar ─────────────────────────────────────────────────
             var lblTitle = new Label
             {
                 Text = $"🏆  {_teamName}",
@@ -74,7 +71,6 @@ namespace PRSC_Player_Auction_System
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // ── Top divider ───────────────────────────────────────────────
             var div1 = new Panel
             {
                 Dock = DockStyle.Top,
@@ -82,7 +78,6 @@ namespace PRSC_Player_Auction_System
                 BackColor = _accent
             };
 
-            // ── Summary strip ─────────────────────────────────────────────
             var pnlSummary = new Panel
             {
                 Dock = DockStyle.Top,
@@ -126,7 +121,6 @@ namespace PRSC_Player_Auction_System
             MkStat("REMAINING FUND", $"৳ {_remainingFund:N0}",
                    Color.Gold, 410);
 
-            // ── Divider ───────────────────────────────────────────────────
             var div2 = new Panel
             {
                 Dock = DockStyle.Top,
@@ -134,7 +128,6 @@ namespace PRSC_Player_Auction_System
                 BackColor = Color.FromArgb(40, 40, 40)
             };
 
-            // ── Player grid ───────────────────────────────────────────────
             var dgv = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -155,7 +148,6 @@ namespace PRSC_Player_Auction_System
             };
             dgv.RowTemplate.Height = 34;
 
-            // header style
             var hdrStyle = new DataGridViewCellStyle
             {
                 BackColor = Color.FromArgb(20, 20, 20),
@@ -166,7 +158,6 @@ namespace PRSC_Player_Auction_System
             };
             dgv.ColumnHeadersDefaultCellStyle = hdrStyle;
 
-            // default cell style
             var cellStyle = new DataGridViewCellStyle
             {
                 BackColor = _rowBg,
@@ -183,7 +174,6 @@ namespace PRSC_Player_Auction_System
             { BackColor = _altBg };
             dgv.AlternatingRowsDefaultCellStyle = altStyle;
 
-            // columns
             void AddCol(string hdr, string prop, int fw)
             {
                 var c = new DataGridViewTextBoxColumn
@@ -206,7 +196,6 @@ namespace PRSC_Player_Auction_System
             dgv.AutoGenerateColumns = false;
             dgv.DataSource = new BindingSource { DataSource = _bought };
 
-            // colour sold-price column gold
             dgv.CellFormatting += (s, ev) =>
             {
                 if (ev.ColumnIndex == 4 && ev.RowIndex >= 0)
@@ -217,7 +206,6 @@ namespace PRSC_Player_Auction_System
                 }
             };
 
-            // ── Bottom strip: export button + close ───────────────────────
             var pnlBottom = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -243,17 +231,13 @@ namespace PRSC_Player_Auction_System
                 return b;
             }
 
-            var btnExport = MkBtn("📄  Export PDF",
-                                  Color.FromArgb(160, 80, 0), 10);
-            var btnClose = MkBtn("✖  Close",
-                                  Color.FromArgb(80, 20, 20),
-                                  this.ClientSize.Width - 178);
+            var btnExport = MkBtn("📄  Export PDF", Color.FromArgb(160, 80, 0), 10);
+            var btnClose = MkBtn("✖  Close", Color.FromArgb(80, 20, 20),
+                                 this.ClientSize.Width - 178);
 
             btnExport.Click += (s, ev) => ExportTeamPdf();
             btnClose.Click += (s, ev) => this.Close();
 
-            // ── Wire up ────────────────────────────────────────────────────
-            // Add in reverse dock order so Fill works correctly
             this.Controls.Add(dgv);
             this.Controls.Add(pnlBottom);
             this.Controls.Add(div2);
@@ -262,7 +246,6 @@ namespace PRSC_Player_Auction_System
             this.Controls.Add(lblTitle);
         }
 
-        // ── PDF export for this team ──────────────────────────────────────
         private void ExportTeamPdf()
         {
             using (var sfd = new SaveFileDialog())
@@ -310,9 +293,7 @@ namespace PRSC_Player_Auction_System
                 return FontFactory.GetFont(FontFactory.HELVETICA, sz, style, c);
             }
 
-            // colours
-            var cAccent = _isTeamA ? new BaseColor(50, 205, 50)
-                                    : new BaseColor(100, 149, 237);
+            var cAccent = _isTeamA ? new BaseColor(50, 205, 50) : new BaseColor(100, 149, 237);
             var cGold = new BaseColor(255, 215, 0);
             var cRed = new BaseColor(255, 80, 80);
             var cLight = new BaseColor(220, 220, 220);
@@ -328,13 +309,11 @@ namespace PRSC_Player_Auction_System
 
             decimal spent = _initialFund - _remainingFund;
 
-            // ── Title ─────────────────────────────────────────────────────
             doc.Add(new Paragraph($"🏆  {_teamName}", F(24f, iTextSharp.text.Font.BOLD, cAccent))
             { Alignment = Element.ALIGN_CENTER, SpacingAfter = 2f });
             doc.Add(new Paragraph("PRSC Player Auction — Team Report", F(9f, iTextSharp.text.Font.NORMAL, cDim))
             { Alignment = Element.ALIGN_CENTER, SpacingAfter = 12f });
 
-            // ── Summary box ───────────────────────────────────────────────
             var tSum = new PdfPTable(3) { WidthPercentage = 100f, SpacingAfter = 14f };
             tSum.SetWidths(new float[] { 33f, 34f, 33f });
 
@@ -368,10 +347,10 @@ namespace PRSC_Player_Auction_System
                 F(13f, iTextSharp.text.Font.BOLD, cGold)));
             doc.Add(tSum);
 
-            // ── Player table ──────────────────────────────────────────────
             if (_bought.Count == 0)
             {
-                doc.Add(new Paragraph("No players purchased yet.", F(11f, iTextSharp.text.Font.ITALIC, cDim))
+                doc.Add(new Paragraph("No players purchased yet.",
+                    F(11f, iTextSharp.text.Font.ITALIC, cDim))
                 { Alignment = Element.ALIGN_CENTER });
             }
             else
@@ -381,21 +360,20 @@ namespace PRSC_Player_Auction_System
                 { WidthPercentage = 100f, HeaderRows = 1, SpacingBefore = 4f };
                 tbl.SetWidths(cw);
 
-                // helper: header cell
-                PdfPCell HdrCell(string txt) => new PdfPCell(new Phrase(txt, F(9f, iTextSharp.text.Font.BOLD, cAccent)))
-                {
-                    BackgroundColor = cHdr,
-                    BorderWidthBottom = 1.5f,
-                    BorderWidthTop = 0f,
-                    BorderWidthLeft = 0f,
-                    BorderWidthRight = 0f,
-                    BorderColor = cAccent,
-                    Padding = 7f,
-                    HorizontalAlignment = Element.ALIGN_CENTER,
-                    VerticalAlignment = Element.ALIGN_MIDDLE
-                };
+                PdfPCell HdrCell(string txt) =>
+                    new PdfPCell(new Phrase(txt, F(9f, iTextSharp.text.Font.BOLD, cAccent)))
+                    {
+                        BackgroundColor = cHdr,
+                        BorderWidthBottom = 1.5f,
+                        BorderWidthTop = 0f,
+                        BorderWidthLeft = 0f,
+                        BorderWidthRight = 0f,
+                        BorderColor = cAccent,
+                        Padding = 7f,
+                        HorizontalAlignment = Element.ALIGN_CENTER,
+                        VerticalAlignment = Element.ALIGN_MIDDLE
+                    };
 
-                // helper: data cell
                 PdfPCell DCell(string txt, iTextSharp.text.Font font, BaseColor bg) =>
                     new PdfPCell(new Phrase(txt ?? "", font))
                     {
@@ -417,16 +395,13 @@ namespace PRSC_Player_Auction_System
                 tbl.AddCell(HdrCell("Sold Price (BDT)"));
                 tbl.AddCell(HdrCell("Base Price (BDT)"));
 
-                bool alt = false;
-                int n = 0;
+                bool alt = false; int n = 0;
                 foreach (var p in _bought)
                 {
                     n++;
-                    var bg = alt ? cRowAlt : cRowDark;
-                    alt = !alt;
+                    var bg = alt ? cRowAlt : cRowDark; alt = !alt;
                     var fNorm = F(8.5f, iTextSharp.text.Font.NORMAL, cLight);
                     var fPrice = F(8.5f, iTextSharp.text.Font.BOLD, cGold);
-
                     tbl.AddCell(DCell(n.ToString(), fNorm, bg));
                     tbl.AddCell(DCell(p.Name, fNorm, bg));
                     tbl.AddCell(DCell(p.Position, fNorm, bg));
@@ -436,21 +411,33 @@ namespace PRSC_Player_Auction_System
                 }
                 doc.Add(tbl);
 
-                // ── Total row ──────────────────────────────────────────────
                 doc.Add(new Paragraph(
                     $"\nTotal spent on {_bought.Count} player(s):   BDT {spent:N0}   |   Remaining fund:   BDT {_remainingFund:N0}",
                     F(8.5f, iTextSharp.text.Font.BOLD, cGold))
                 { Alignment = Element.ALIGN_RIGHT, SpacingBefore = 6f });
             }
 
-            // ── Footer ────────────────────────────────────────────────────
             doc.Add(new Paragraph(
-                $"\nPRSC Auction System   |   {_teamName}   |   Printed: {DateTime.Now:dd MMM yyyy HH:mm}",
+                $"\nPRSC Auction System   |   {_teamName}   |   Printed: {DateTime.Now:dd MMM yyyy HH:mm}\nDevelop by Emon Joy",
                 F(7f, iTextSharp.text.Font.NORMAL, cDim))
             { Alignment = Element.ALIGN_CENTER, SpacingBefore = 10f });
 
             doc.Close();
         }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // TeamReportForm
+            // 
+            this.ClientSize = new System.Drawing.Size(833, 680);
+            this.Name = "TeamReportForm";
+            this.ResumeLayout(false);
+
+        }
+
+        private void TeamReportForm_Load(object sender, EventArgs e) { }
     }
 
     // ════════════════════════════════════════════════════════════════════
@@ -461,6 +448,7 @@ namespace PRSC_Player_Auction_System
         private List<Player> players = new List<Player>();
 
         // ── Fund properties ───────────────────────────────────────────────
+        // FIX: Use fixed keys "TeamA" / "TeamB" instead of dynamic team names
         public decimal TeamAFund
         {
             get
@@ -473,7 +461,7 @@ namespace PRSC_Player_Auction_System
             {
                 if (txtTeamAFund == null) return;
                 txtTeamAFund.Text = value.ToString("N0");
-                try { DatabaseHelper.UpdateTeamFund(txtTeamAName?.Text ?? "", value); } catch { }
+                try { DatabaseHelper.UpdateTeamFund("TeamA", value); } catch { }
             }
         }
 
@@ -489,7 +477,7 @@ namespace PRSC_Player_Auction_System
             {
                 if (txtTeamBFund == null) return;
                 txtTeamBFund.Text = value.ToString("N0");
-                try { DatabaseHelper.UpdateTeamFund(txtTeamBName?.Text ?? "", value); } catch { }
+                try { DatabaseHelper.UpdateTeamFund("TeamB", value); } catch { }
             }
         }
 
@@ -546,17 +534,13 @@ namespace PRSC_Player_Auction_System
         }
 
         // ── Load / bind ───────────────────────────────────────────────────
+        // FIX: Split into two try/catch blocks so a fund error doesn't
+        //      also wipe out the player list, and use fixed keys "TeamA"/"TeamB"
         private void LoadFromDatabase()
         {
             try
             {
                 players = DatabaseHelper.GetAllPlayers() ?? new List<Player>();
-                string an = txtTeamAName?.Text ?? "Team Alpha";
-                string bn = txtTeamBName?.Text ?? "Team Beta";
-                if (txtTeamAFund != null)
-                    txtTeamAFund.Text = DatabaseHelper.GetTeamFund(an).ToString("N0");
-                if (txtTeamBFund != null)
-                    txtTeamBFund.Text = DatabaseHelper.GetTeamFund(bn).ToString("N0");
             }
             catch (Exception ex)
             {
@@ -564,6 +548,21 @@ namespace PRSC_Player_Auction_System
                 if (lblStatusBar != null)
                     lblStatusBar.Text = $"  ⚠ DB unavailable — offline mode. ({ex.Message})";
             }
+
+            try
+            {
+                if (txtTeamAFund != null)
+                    txtTeamAFund.Text = DatabaseHelper.GetTeamFund("TeamA").ToString("N0");
+                if (txtTeamBFund != null)
+                    txtTeamBFund.Text = DatabaseHelper.GetTeamFund("TeamB").ToString("N0");
+            }
+            catch
+            {
+                // Fund records missing — fall back to default values silently
+                if (txtTeamAFund != null) txtTeamAFund.Text = "100,000";
+                if (txtTeamBFund != null) txtTeamBFund.Text = "100,000";
+            }
+
             BindGrid();
             UpdateStats();
         }
@@ -618,17 +617,16 @@ namespace PRSC_Player_Auction_System
 
             if (dgvPlayers.Columns[e.ColumnIndex].Name == "colStatus")
             {
-                e.CellStyle.ForeColor = player.IsSold ? Color.FromArgb(255, 80, 80)
-                                                      : Color.FromArgb(50, 205, 50);
+                e.CellStyle.ForeColor = player.IsSold
+                    ? Color.FromArgb(255, 80, 80)
+                    : Color.FromArgb(50, 205, 50);
                 e.CellStyle.Font = new WinFont("Segoe UI", 9.5F, FontStyle.Bold);
             }
             if (dgvPlayers.Columns[e.ColumnIndex].Name == "col_AssignedTeam" && player.IsSold)
                 e.CellStyle.ForeColor = Color.FromArgb(100, 180, 255);
         }
 
-        // ════════════════════════════════════════════════════════════════
-        //  📊 TEAM INFO BUTTON HANDLERS
-        // ════════════════════════════════════════════════════════════════
+        // ── Team report buttons ───────────────────────────────────────────
         private void btnTeamAInfo_Click(object sender, EventArgs e)
             => ShowTeamReport(isTeamA: true);
 
@@ -640,23 +638,30 @@ namespace PRSC_Player_Auction_System
             string name = isTeamA ? TeamAName : TeamBName;
             decimal fund = isTeamA ? TeamAFund : TeamBFund;
 
-            // derive initial fund: remaining + everything this team spent
             var bought = players
                 .Where(p => p.IsSold &&
                        (p.AssignedTeam ?? "").Equals(name, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             decimal spent = bought.Sum(p => p.SoldPrice);
-            decimal initialFund = fund + spent;   // reconstruct initial
+            decimal initialFund = fund + spent;
 
             using (var frm = new TeamReportForm(name, initialFund, fund, bought, isTeamA))
                 frm.ShowDialog(this);
         }
 
-        // ── Toolbar handlers ─────────────────────────────────────────────
+        private List<string> GetTeamNames()
+        {
+            var names = new List<string>();
+            if (!string.IsNullOrWhiteSpace(TeamAName)) names.Add(TeamAName);
+            if (!string.IsNullOrWhiteSpace(TeamBName)) names.Add(TeamBName);
+            return names;
+        }
+
+        // ── Toolbar handlers ──────────────────────────────────────────────
         private void btnAddPlayer_Click(object sender, EventArgs e)
         {
-            using (var dlg = new AddPlayerForm())
+            using (var dlg = new AddPlayerForm(teamNames: GetTeamNames()))  // ← change
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
@@ -675,21 +680,25 @@ namespace PRSC_Player_Auction_System
         {
             var player = GetSelectedPlayer();
             if (player == null) { ShowInfo("Please select a player to edit."); return; }
-            using (var dlg = new AddPlayerForm(player))
+
+            using (var dlg = new AddPlayerForm(player, GetTeamNames()))  // ← change
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     var ed = dlg.Result;
-                    player.Name = ed.Name; player.Position = ed.Position;
-                    player.SkillLevel = ed.SkillLevel; player.BasePrice = ed.BasePrice;
-                    player.SoldPrice = ed.SoldPrice; player.AssignedTeam = ed.AssignedTeam;
-                    player.Status = ed.Status; player.VideoPath = ed.VideoPath;
+                    player.Name = ed.Name;
+                    player.Position = ed.Position;
+                    player.SkillLevel = ed.SkillLevel;
+                    player.BasePrice = ed.BasePrice;
+                    player.SoldPrice = ed.SoldPrice;
+                    player.AssignedTeam = ed.AssignedTeam;
+                    player.Status = ed.Status;
+                    player.VideoPath = ed.VideoPath;
                     try { DatabaseHelper.UpdatePlayer(player); } catch { }
                     RefreshGrid();
                 }
             }
         }
-
         private void btnDeletePlayer_Click(object sender, EventArgs e)
         {
             var player = GetSelectedPlayer();
@@ -710,7 +719,11 @@ namespace PRSC_Player_Auction_System
             var picked = available[new Random().Next(available.Count)];
             using (var auction = new FullScreenAuctionForm(picked, this))
                 auction.ShowDialog();
-            RefreshGrid();
+            
+            // CRITICAL FIX: Reload from database instead of just refreshing grid
+    // This ensures all player states and team funds are synced from DB
+    try { LoadFromDatabase(); }
+    catch { RefreshGrid(); }  // Fallback to refresh if DB is unavailable                       
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -720,7 +733,8 @@ namespace PRSC_Player_Auction_System
             {
                 try { DatabaseHelper.ResetAllPlayers(); } catch { }
                 LoadFromDatabase();
-                if (lblStatusBar != null) lblStatusBar.Text = "  Auction reset. Ready to begin.";
+                if (lblStatusBar != null)
+                    lblStatusBar.Text = "  Auction reset. Ready to begin.";
             }
         }
 
@@ -738,7 +752,8 @@ namespace PRSC_Player_Auction_System
                 try
                 {
                     ExportToPdf(sfd.FileName);
-                    if (lblStatusBar != null) lblStatusBar.Text = $"  PDF exported: {sfd.FileName}";
+                    if (lblStatusBar != null)
+                        lblStatusBar.Text = $"  PDF exported: {sfd.FileName}";
                     if (MessageBox.Show("PDF exported!\nOpen it now?", "Export Complete",
                             MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                         System.Diagnostics.Process.Start(sfd.FileName);
@@ -816,7 +831,8 @@ namespace PRSC_Player_Auction_System
 
             doc.Add(new Paragraph("PRSC PLAYER AUCTION SYSTEM", fTitle)
             { Alignment = Element.ALIGN_CENTER, SpacingAfter = 2f });
-            doc.Add(new Paragraph($"Generated: {DateTime.Now:dd MMMM yyyy   HH:mm}", fStamp)
+            doc.Add(new Paragraph(
+                $"Generated: {DateTime.Now:dd MMMM yyyy   HH:mm} \nDevelop by Emon Joy", fStamp)
             { Alignment = Element.ALIGN_CENTER, SpacingAfter = 8f });
 
             var hdrTable = new PdfPTable(3) { WidthPercentage = 100f, SpacingAfter = 10f };
@@ -853,7 +869,14 @@ namespace PRSC_Player_Auction_System
             tblB.AddCell(TR($"Fund: BDT {teamBFund:N0}", fFund, cTeamBBg, pt: 2f, pb: 2f));
             tblB.AddCell(TR($"Players: {cntB}", fLabel, cTeamBBg, pt: 2f, pb: 8f));
             hdrTable.AddCell(new PdfPCell(tblB)
-            { Border = PdfPCell.BOX, BorderColor = cBlue, BorderWidth = 1.5f, Padding = 0f, PaddingLeft = 5f, PaddingRight = 5f });
+            {
+                Border = PdfPCell.BOX,
+                BorderColor = cBlue,
+                BorderWidth = 1.5f,
+                Padding = 0f,
+                PaddingLeft = 5f,
+                PaddingRight = 5f
+            });
 
             var tblStats = new PdfPTable(1) { WidthPercentage = 100f };
             PdfPCell SR(string lbl, string val, iTextSharp.text.Font vf)
@@ -880,7 +903,13 @@ namespace PRSC_Player_Auction_System
             tblStats.AddCell(SR("SOLD", sold.ToString(), fStatRed));
             tblStats.AddCell(SR("FREE", avail.ToString(), fStatGrn));
             hdrTable.AddCell(new PdfPCell(tblStats)
-            { Border = PdfPCell.BOX, BorderColor = cGold, BorderWidth = 1.5f, Padding = 0f, PaddingLeft = 5f });
+            {
+                Border = PdfPCell.BOX,
+                BorderColor = cGold,
+                BorderWidth = 1.5f,
+                Padding = 0f,
+                PaddingLeft = 5f
+            });
 
             doc.Add(hdrTable);
 
@@ -889,7 +918,8 @@ namespace PRSC_Player_Auction_System
             { WidthPercentage = 100f, HeaderRows = 1, SpacingBefore = 4f };
             tbl.SetWidths(cw);
 
-            foreach (var h in new[] { "#", "Player Name", "Position", "Skill", "Base Price", "Sold Price", "Assigned Team", "Status", "" })
+            foreach (var h in new[] { "#", "Player Name", "Position", "Skill",
+                                      "Base Price", "Sold Price", "Assigned Team", "Status", "" })
                 tbl.AddCell(new PdfPCell(new Phrase(h, fColHdr))
                 {
                     BackgroundColor = cTblHdr,
@@ -953,8 +983,10 @@ namespace PRSC_Player_Auction_System
             int idx = dgvPlayers.SelectedRows[0].Index;
             return (idx >= 0 && idx < players.Count) ? players[idx] : null;
         }
+
         private void ShowInfo(string msg) =>
             MessageBox.Show(msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
         private void dgvPlayers_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
         private void dgvPlayers_CellContentClick_1(object sender, DataGridViewCellEventArgs e) { }
     }

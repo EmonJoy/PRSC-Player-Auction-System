@@ -35,7 +35,7 @@ namespace PRSC_Player_Auction_System
 
             try
             {
-                Application.Run(new MainForm());
+                Application.Run(new SplashForm());
             }
             catch (Exception ex)
             {

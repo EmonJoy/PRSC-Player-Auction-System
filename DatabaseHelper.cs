@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 
 namespace PRSC_Player_Auction_System
 {
-
     public static class DatabaseHelper
     {
-        // ── Change server name here if needed ──────────────────────────
+        // ── Uses |DataDirectory| so the path works on any machine ──────
         private static readonly string connectionString =
-            @"Server=DESKTOP-BF5OMUT\SQLEXPRESS;Database=PRSC_Auction_DB;Trusted_Connection=True;";
-
+    @"Server=DESKTOP-BF5OMUT\SQLEXPRESS;Database=PRSC_Auction_DB;Trusted_Connection=True;";
         // ═══════════════════════════════════════════════════════════════
         //  GET ALL PLAYERS
         // ═══════════════════════════════════════════════════════════════
@@ -20,24 +19,24 @@ namespace PRSC_Player_Auction_System
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var cmd = new SqlCommand("SELECT * FROM Players ORDER BY Id", conn);
                 conn.Open();
 
+                using (var cmd = new SqlCommand("SELECT * FROM Players ORDER BY Id", conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         var p = new Player
                         {
-                            Id           = (int)reader["Id"],
-                            Name         = reader["Name"].ToString(),
-                            Position     = SafeString(reader, "Position"),
-                            SkillLevel   = SafeString(reader, "SkillLevel", "Medium"),
-                            BasePrice    = (decimal)reader["BasePrice"],
-                            SoldPrice    = SafeDecimal(reader, "SoldPrice"),
+                            Id = (int)reader["Id"],
+                            Name = reader["Name"].ToString(),
+                            Position = SafeString(reader, "Position"),
+                            SkillLevel = SafeString(reader, "SkillLevel", "Medium"),
+                            BasePrice = (decimal)reader["BasePrice"],
+                            SoldPrice = SafeDecimal(reader, "SoldPrice"),
                             AssignedTeam = SafeString(reader, "AssignedTeam", "—"),
-                            VideoPath    = SafeString(reader, "VideoPath"),
-                            IsSold       = (bool)reader["IsSold"]   // sets Status too
+                            VideoPath = SafeString(reader, "VideoPath"),
+                            IsSold = (bool)reader["IsSold"]
                         };
                         players.Add(p);
                     }
@@ -54,6 +53,8 @@ namespace PRSC_Player_Auction_System
         {
             using (var conn = new SqlConnection(connectionString))
             {
+                conn.Open();
+
                 const string sql = @"
                     INSERT INTO Players
                         (Name, Position, SkillLevel, BasePrice, SoldPrice, AssignedTeam, IsSold, VideoPath)
@@ -61,18 +62,19 @@ namespace PRSC_Player_Auction_System
                         (@Name, @Position, @SkillLevel, @BasePrice, @SoldPrice, @AssignedTeam, @IsSold, @VideoPath);
                     SELECT SCOPE_IDENTITY();";
 
-                var cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@Name",         player.Name);
-                cmd.Parameters.AddWithValue("@Position",     player.Position);
-                cmd.Parameters.AddWithValue("@SkillLevel",   player.SkillLevel);
-                cmd.Parameters.AddWithValue("@BasePrice",    player.BasePrice);
-                cmd.Parameters.AddWithValue("@SoldPrice",    player.SoldPrice);
-                cmd.Parameters.AddWithValue("@AssignedTeam", player.AssignedTeam);
-                cmd.Parameters.AddWithValue("@IsSold",       player.IsSold);
-                cmd.Parameters.AddWithValue("@VideoPath",    (object)player.VideoPath ?? DBNull.Value);
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Name", player.Name);
+                    cmd.Parameters.AddWithValue("@Position", player.Position);
+                    cmd.Parameters.AddWithValue("@SkillLevel", player.SkillLevel);
+                    cmd.Parameters.AddWithValue("@BasePrice", player.BasePrice);
+                    cmd.Parameters.AddWithValue("@SoldPrice", player.SoldPrice);
+                    cmd.Parameters.AddWithValue("@AssignedTeam", player.AssignedTeam);
+                    cmd.Parameters.AddWithValue("@IsSold", player.IsSold);
+                    cmd.Parameters.AddWithValue("@VideoPath", (object)player.VideoPath ?? DBNull.Value);
 
-                conn.Open();
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
             }
         }
 
@@ -83,6 +85,8 @@ namespace PRSC_Player_Auction_System
         {
             using (var conn = new SqlConnection(connectionString))
             {
+                conn.Open();
+
                 const string sql = @"
                     UPDATE Players SET
                         Name         = @Name,
@@ -95,19 +99,20 @@ namespace PRSC_Player_Auction_System
                         VideoPath    = @VideoPath
                     WHERE Id = @Id";
 
-                var cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@Name",         player.Name);
-                cmd.Parameters.AddWithValue("@Position",     player.Position);
-                cmd.Parameters.AddWithValue("@SkillLevel",   player.SkillLevel);
-                cmd.Parameters.AddWithValue("@BasePrice",    player.BasePrice);
-                cmd.Parameters.AddWithValue("@SoldPrice",    player.SoldPrice);
-                cmd.Parameters.AddWithValue("@AssignedTeam", player.AssignedTeam);
-                cmd.Parameters.AddWithValue("@IsSold",       player.IsSold);
-                cmd.Parameters.AddWithValue("@VideoPath",    (object)player.VideoPath ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Id",           player.Id);
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Name", player.Name);
+                    cmd.Parameters.AddWithValue("@Position", player.Position);
+                    cmd.Parameters.AddWithValue("@SkillLevel", player.SkillLevel);
+                    cmd.Parameters.AddWithValue("@BasePrice", player.BasePrice);
+                    cmd.Parameters.AddWithValue("@SoldPrice", player.SoldPrice);
+                    cmd.Parameters.AddWithValue("@AssignedTeam", player.AssignedTeam);
+                    cmd.Parameters.AddWithValue("@IsSold", player.IsSold);
+                    cmd.Parameters.AddWithValue("@VideoPath", (object)player.VideoPath ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Id", player.Id);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
@@ -118,32 +123,50 @@ namespace PRSC_Player_Auction_System
         {
             using (var conn = new SqlConnection(connectionString))
             {
-                var cmd = new SqlCommand("DELETE FROM Players WHERE Id = @Id", conn);
-                cmd.Parameters.AddWithValue("@Id", playerId);
                 conn.Open();
-                cmd.ExecuteNonQuery();
+
+                using (var cmd = new SqlCommand("DELETE FROM Players WHERE Id = @Id", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", playerId);
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        //  LOTTERY: mark one player sold and assign team
+        //  LOTTERY: mark one player sold and assign team (with transaction)
         // ═══════════════════════════════════════════════════════════════
         public static void AssignPlayerToTeam(int playerId, string teamName, decimal soldPrice)
         {
             using (var conn = new SqlConnection(connectionString))
             {
-                const string sql = @"
-                    UPDATE Players
-                    SET IsSold = 1, AssignedTeam = @Team, SoldPrice = @SoldPrice
-                    WHERE Id = @Id";
-
-                var cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@Team",      teamName);
-                cmd.Parameters.AddWithValue("@SoldPrice", soldPrice);
-                cmd.Parameters.AddWithValue("@Id",        playerId);
-
                 conn.Open();
-                cmd.ExecuteNonQuery();
+
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        const string sql = @"
+                            UPDATE Players
+                            SET IsSold = 1, AssignedTeam = @Team, SoldPrice = @SoldPrice
+                            WHERE Id = @Id";
+
+                        using (var cmd = new SqlCommand(sql, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@Team", teamName);
+                            cmd.Parameters.AddWithValue("@SoldPrice", soldPrice);
+                            cmd.Parameters.AddWithValue("@Id", playerId);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 
@@ -154,30 +177,42 @@ namespace PRSC_Player_Auction_System
         {
             using (var conn = new SqlConnection(connectionString))
             {
+                conn.Open();
+
                 const string sql = @"
                     UPDATE Players
                     SET IsSold = 0, SoldPrice = 0, AssignedTeam = '—'";
 
-                var cmd = new SqlCommand(sql, conn);
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        //  TEAM FUND  (Settings table)
+        //  TEAM FUND  (Settings table, with transaction on update)
         // ═══════════════════════════════════════════════════════════════
         public static decimal GetTeamFund(string teamName)
         {
             using (var conn = new SqlConnection(connectionString))
             {
-                var cmd = new SqlCommand(
-                    "SELECT SettingValue FROM Settings WHERE SettingName = @Key", conn);
-                cmd.Parameters.AddWithValue("@Key", teamName + "Fund");
-
                 conn.Open();
-                var result = cmd.ExecuteScalar();
-                return result != null ? decimal.Parse(result.ToString()) : 100000m;
+
+                using (var cmd = new SqlCommand(
+                    "SELECT SettingValue FROM Settings WHERE SettingName = @Key", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Key", teamName + "Fund");
+
+                    var result = cmd.ExecuteScalar();
+
+                    if (result == null || result == DBNull.Value)
+                        throw new InvalidOperationException(
+                            $"No fund record found for team '{teamName}'. " +
+                            "Please initialise the team fund before running the auction.");
+
+                    return decimal.Parse(result.ToString(), CultureInfo.InvariantCulture);
+                }
             }
         }
 
@@ -185,18 +220,35 @@ namespace PRSC_Player_Auction_System
         {
             using (var conn = new SqlConnection(connectionString))
             {
-                const string sql = @"
-                    IF EXISTS (SELECT 1 FROM Settings WHERE SettingName = @Key)
-                        UPDATE Settings SET SettingValue = @Val WHERE SettingName = @Key
-                    ELSE
-                        INSERT INTO Settings (SettingName, SettingValue) VALUES (@Key, @Val)";
-
-                var cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@Key", teamName + "Fund");
-                cmd.Parameters.AddWithValue("@Val", fund.ToString());
-
                 conn.Open();
-                cmd.ExecuteNonQuery();
+
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        const string sql = @"
+                            IF EXISTS (SELECT 1 FROM Settings WHERE SettingName = @Key)
+                                UPDATE Settings SET SettingValue = @Val WHERE SettingName = @Key
+                            ELSE
+                                INSERT INTO Settings (SettingName, SettingValue) VALUES (@Key, @Val)";
+
+                        using (var cmd = new SqlCommand(sql, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@Key", teamName + "Fund");
+                            cmd.Parameters.AddWithValue("@Val",
+                                fund.ToString(CultureInfo.InvariantCulture));
+
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 
