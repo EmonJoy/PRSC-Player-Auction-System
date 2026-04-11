@@ -23,6 +23,7 @@ namespace PRSC_Player_Auction_System
             this.btnEditPlayer = new System.Windows.Forms.Button();
             this.btnDeletePlayer = new System.Windows.Forms.Button();
             this.btnLottery = new System.Windows.Forms.Button();
+            this.btnUndoLastBid = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.btnExportPdf = new System.Windows.Forms.Button();
             this.pnlFooter = new System.Windows.Forms.Panel();
@@ -110,6 +111,7 @@ namespace PRSC_Player_Auction_System
             this.pnlToolbar.Controls.Add(this.btnEditPlayer);
             this.pnlToolbar.Controls.Add(this.btnDeletePlayer);
             this.pnlToolbar.Controls.Add(this.btnLottery);
+            this.pnlToolbar.Controls.Add(this.btnUndoLastBid);
             this.pnlToolbar.Controls.Add(this.btnReset);
             this.pnlToolbar.Controls.Add(this.btnExportPdf);
             this.pnlToolbar.Dock = System.Windows.Forms.DockStyle.Top;
@@ -122,18 +124,22 @@ namespace PRSC_Player_Auction_System
             MakeButton(this.btnEditPlayer, "✏️  Edit Player", 154, System.Drawing.Color.FromArgb(0, 80, 160));
             MakeButton(this.btnDeletePlayer, "🗑  Delete", 296, System.Drawing.Color.FromArgb(160, 30, 30));
             MakeButton(this.btnLottery, "🎲  Lottery", 438, System.Drawing.Color.FromArgb(120, 0, 160));
+            MakeButton(this.btnUndoLastBid, "↩  Undo", 718, System.Drawing.Color.FromArgb(0, 110, 110));
             MakeButton(this.btnReset, "🔄  Reset", 580, System.Drawing.Color.FromArgb(100, 80, 0));
+            this.btnUndoLastBid.Size = new System.Drawing.Size(60, 38);
 
             this.btnAddPlayer.TabIndex = 0;
             this.btnEditPlayer.TabIndex = 1;
             this.btnDeletePlayer.TabIndex = 2;
             this.btnLottery.TabIndex = 3;
-            this.btnReset.TabIndex = 4;
+            this.btnUndoLastBid.TabIndex = 4;
+            this.btnReset.TabIndex = 5;
 
             this.btnAddPlayer.Click += new System.EventHandler(this.btnAddPlayer_Click);
             this.btnEditPlayer.Click += new System.EventHandler(this.btnEditPlayer_Click);
             this.btnDeletePlayer.Click += new System.EventHandler(this.btnDeletePlayer_Click);
             this.btnLottery.Click += new System.EventHandler(this.btnLottery_Click);
+            this.btnUndoLastBid.Click += new System.EventHandler(this.btnUndoLastBid_Click);
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
 
             // ── btnExportPdf ───────────────────────────────────────────────
@@ -145,10 +151,10 @@ namespace PRSC_Player_Auction_System
             this.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportPdf.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnExportPdf.ForeColor = System.Drawing.Color.White;
-            this.btnExportPdf.Location = new System.Drawing.Point(938 - 158 - 12, 13);
-            this.btnExportPdf.Size = new System.Drawing.Size(158, 38);
+            this.btnExportPdf.Location = new System.Drawing.Point(938 - 140 - 12, 13);
+            this.btnExportPdf.Size = new System.Drawing.Size(140, 38);
             this.btnExportPdf.Name = "btnExportPdf";
-            this.btnExportPdf.TabIndex = 5;
+            this.btnExportPdf.TabIndex = 6;
             this.btnExportPdf.Text = "📄  Export PDF";
             this.btnExportPdf.UseVisualStyleBackColor = false;
             this.btnExportPdf.Click += new System.EventHandler(this.btnExportPdf_Click);
@@ -404,7 +410,7 @@ namespace PRSC_Player_Auction_System
         private System.Windows.Forms.Panel pnlToolbar, pnlFooter, pnlDivider,
                                            pnlTopDivider, pnlTeamA, pnlTeamB, pnlStats;
         private System.Windows.Forms.Button btnAddPlayer, btnEditPlayer,
-                                            btnDeletePlayer, btnLottery, btnReset,
+                                            btnDeletePlayer, btnLottery, btnUndoLastBid, btnReset,
                                             btnExportPdf,
                                             btnTeamAInfo, btnTeamBInfo;          // ← NEW
         private System.Windows.Forms.Label lblTitle, lblTeamALabel, lblTeamAFundLbl,

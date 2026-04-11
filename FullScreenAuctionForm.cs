@@ -23,7 +23,7 @@ namespace PRSC_Player_Auction_System
 
         // ── TIMER SYSTEM ────────────────────────────────────────────────
         private Timer _auctionTimer;
-        private int _remainingSeconds = 15;
+        private int _remainingSeconds = AUCTION_TIME_LIMIT;
         private const int AUCTION_TIME_LIMIT = 15;
         private bool _timerStarted = false;
         private string _lastBidderTeam = "";
@@ -76,6 +76,7 @@ namespace PRSC_Player_Auction_System
         static readonly Color ORANGE_BG = Color.FromArgb(40, 20, 0);
         static readonly Color DIM = Color.FromArgb(110, 110, 130);
         static readonly Color WHITE = Color.FromArgb(235, 235, 240);
+        private const string CUSTOM_BID_PLACEHOLDER = "Enter custom bid";
 
         // ═══════════════════════════════════════════════════════════════
         //  CONSTRUCTOR
@@ -143,6 +144,7 @@ namespace PRSC_Player_Auction_System
                 UpdateTimerDisplay();
                 _auctionTimer.Start();
                 _lblTimerStatus.ForeColor = ORANGE;
+                UpdateMainTimerButtons();
                 UpdateActiveBidTeamUI();
             }
         }
@@ -157,12 +159,24 @@ namespace PRSC_Player_Auction_System
                 _auctionTimer.Stop();
                 _auctionTimer.Start();
             }
+
+            UpdateMainTimerButtons();
         }
 
         private void StopAuctionTimer()
         {
-            _auctionTimer.Stop();
-            _lblTimerStatus.ForeColor = DIM;
+            if (_auctionTimer.Enabled)
+            {
+                _auctionTimer.Stop();
+                _lblTimerStatus.ForeColor = DIM;
+            }
+            else if (_timerStarted)
+            {
+                _auctionTimer.Start();
+                _lblTimerStatus.ForeColor = ORANGE;
+            }
+
+            UpdateMainTimerButtons();
             UpdateActiveBidTeamUI();
         }
 
@@ -173,7 +187,14 @@ namespace PRSC_Player_Auction_System
             _remainingSeconds = AUCTION_TIME_LIMIT;
             UpdateTimerDisplay();
             _lblTimerStatus.ForeColor = DIM;
+            UpdateMainTimerButtons();
             UpdateActiveBidTeamUI();
+        }
+
+        private void UpdateMainTimerButtons()
+        {
+            if (_btnTimerStop == null) return;
+            _btnTimerStop.Text = _auctionTimer != null && _auctionTimer.Enabled ? "⏸  PAUSE" : "▶  RESUME";
         }
 
         private void UpdateTimerDisplay()
@@ -390,7 +411,7 @@ namespace PRSC_Player_Auction_System
 
             var lblBidCaption = new Label
             {
-                Text = "CURRENT BID",
+                Text = "LIVE BID",
                 ForeColor = DIM,
                 Font = new Font("Segoe UI", 8F, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -451,7 +472,7 @@ namespace PRSC_Player_Auction_System
 
             _lblTimerCount = new Label
             {
-                Text = "15",
+                Text = AUCTION_TIME_LIMIT.ToString(),
                 ForeColor = GREEN,
                 Font = new Font("Impact", 42F),
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -477,7 +498,7 @@ namespace PRSC_Player_Auction_System
 
             _lblTimerStatus = new Label
             {
-                Text = "⏱  WAITING FOR FIRST BID",
+                Text = "⏱  WAITING FOR OPENING BID",
                 ForeColor = DIM,
                 Font = new Font("Segoe UI", 8F, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -624,19 +645,19 @@ namespace PRSC_Player_Auction_System
                 ForeColor = DIM,
                 Font = new Font("Segoe UI", 10F),
                 TextAlign = HorizontalAlignment.Center,
-                Text = "Custom amount",
+                Text = CUSTOM_BID_PLACEHOLDER,
                 BorderStyle = BorderStyle.FixedSingle,
                 Margin = new Padding(4, 2, 4, 2)
             };
             _txtCustomBid.GotFocus += (s, e) =>
             {
-                if (_txtCustomBid.Text == "Custom amount")
+                if (_txtCustomBid.Text == CUSTOM_BID_PLACEHOLDER)
                 { _txtCustomBid.Text = ""; _txtCustomBid.ForeColor = WHITE; }
             };
             _txtCustomBid.LostFocus += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(_txtCustomBid.Text))
-                { _txtCustomBid.Text = "Custom amount"; _txtCustomBid.ForeColor = DIM; }
+                { _txtCustomBid.Text = CUSTOM_BID_PLACEHOLDER; _txtCustomBid.ForeColor = DIM; }
             };
             _txtCustomBid.KeyDown += TxtCustomBid_KeyDown;
 
@@ -763,6 +784,7 @@ namespace PRSC_Player_Auction_System
             _btnTimerReset.Click += (s, e) => ManualResetTimer();
             WireBidderSelect(_teamACard, _mainForm.TeamAName);
             WireBidderSelect(_teamBCard, _mainForm.TeamBName);
+            UpdateMainTimerButtons();
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -1009,6 +1031,12 @@ namespace PRSC_Player_Auction_System
                 return;
             }
 
+            _mainForm.RecordLastBidState(
+                _player,
+                _player.SoldPrice,
+                _player.AssignedTeam,
+                _player.Status,
+                _player.LastBidder);
             _player.AssignedTeam = teamName;
             _player.IsSold = true;
             _player.SoldPrice = _player.CurrentPrice;
@@ -1066,7 +1094,7 @@ namespace PRSC_Player_Auction_System
         private void TryPlaceBidFromInput()
         {
             string t = _txtCustomBid.Text.Trim();
-            if (string.IsNullOrWhiteSpace(t) || t == "Custom amount")
+            if (string.IsNullOrWhiteSpace(t) || t == CUSTOM_BID_PLACEHOLDER)
             {
                 MessageBox.Show("Please enter a custom bid amount.", "Invalid Input",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1076,7 +1104,7 @@ namespace PRSC_Player_Auction_System
             {
                 MessageBox.Show("Please enter a valid number.", "Invalid Input",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _txtCustomBid.Text = "Custom amount";
+                _txtCustomBid.Text = CUSTOM_BID_PLACEHOLDER;
                 _txtCustomBid.ForeColor = DIM;
                 return;
             }
@@ -1129,23 +1157,31 @@ namespace PRSC_Player_Auction_System
             else if (_timerStarted)
                 timerState = "TIMER PAUSED";
             else
-                timerState = "WAITING FOR FIRST BID";
+                timerState = "WAITING FOR OPENING BID";
             _lblTimerStatus.Text = $"⏱  {timerState}  |  NEXT BID: {_activeBidTeam}";
         }
 
         private void ApplyBid(string biddingTeam, decimal amount)
         {
+            _mainForm.RecordLastBidState(
+                _player,
+                _player.SoldPrice,
+                _player.AssignedTeam,
+                _player.Status,
+                _player.LastBidder);
             _player.CurrentPrice = amount;
             _lastBidderTeam = biddingTeam;
+            _player.LastBidder = biddingTeam;
             _activeBidTeam = GetOppositeTeam(biddingTeam);
             _timerStarted = true;
             _remainingSeconds = AUCTION_TIME_LIMIT;
 
-            _txtCustomBid.Text = "Custom amount";
+            _txtCustomBid.Text = CUSTOM_BID_PLACEHOLDER;
             _txtCustomBid.ForeColor = DIM;
             UpdatePriceDisplay();
             UpdateTimerDisplay();
             UpdateActiveBidTeamUI();
+            try { DatabaseHelper.UpdatePlayer(_player); } catch { }
         }
 
         private void RunBidPopupLoop(string previousBidTeam)
@@ -1191,6 +1227,12 @@ namespace PRSC_Player_Auction_System
                     if (popup.Action == BidTurnAction.Timeout)
                     {
                         AutoSellToLastBidder();
+                        return;
+                    }
+
+                    if (popup.Action == BidTurnAction.CancelAuction)
+                    {
+                        CancelCurrentAuction();
                         return;
                     }
 
@@ -1294,6 +1336,32 @@ namespace PRSC_Player_Auction_System
             {
                 SellTo(_mainForm.TeamBName, _mainForm.TeamBFund, f => _mainForm.TeamBFund = f, isAutoSell);
             }
+        }
+
+        private void CancelCurrentAuction()
+        {
+            _popupBiddingActive = false;
+            _auctionTimer?.Stop();
+
+            _player.SoldPrice = 0;
+            _player.AssignedTeam = "—";
+            _player.Status = "Available";
+            _player.LastBidder = "";
+            _lastBidderTeam = "";
+            _remainingSeconds = AUCTION_TIME_LIMIT;
+            _timerStarted = false;
+
+            _mainForm.ClearLastBidState(_player.Id);
+
+            try { DatabaseHelper.UpdatePlayer(_player); } catch { }
+
+            MessageBox.Show(
+                "Auction stopped for this player. No sale was recorded.",
+                "Auction Cut",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            SafeClose();
         }
 
         private void WireBidderSelect(Control control, string teamName)
@@ -1400,7 +1468,8 @@ namespace PRSC_Player_Auction_System
         None,
         PlaceBid,
         SellToLastBidder,
-        Timeout
+        Timeout,
+        CancelAuction
     }
 
     internal sealed class BidTurnForm : Form
@@ -1418,10 +1487,14 @@ namespace PRSC_Player_Auction_System
         private Label _lblTimer;
         private TextBox _txtBid;
         private Button _btnSell;
+        private Button _btnPauseTimer;
+        private Button _btnResetTimer;
+        private Button _btnCutAuction;
         private Button[] _shortcutButtons;
         private decimal[] _shortcutIncrements;
         private int _selectedShortcutIndex;
         private bool _shortcutSelectionPrimed = true;
+        private bool _timerPaused;
 
         public BidTurnAction Action { get; private set; }
         public decimal BidAmount { get; private set; }
@@ -1469,7 +1542,7 @@ namespace PRSC_Player_Auction_System
             var root = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                RowCount = 5,
+                RowCount = 6,
                 ColumnCount = 1,
                 Padding = new Padding(18),
                 BackColor = Color.Transparent
@@ -1478,6 +1551,7 @@ namespace PRSC_Player_Auction_System
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 64));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 84));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 72));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 52));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             Controls.Add(root);
 
@@ -1603,7 +1677,7 @@ namespace PRSC_Player_Auction_System
             _btnSell = new Button
             {
                 Dock = DockStyle.Fill,
-                Text = string.IsNullOrEmpty(_lastBidderTeam) ? "WAITING FOR FIRST BID" : $"SELL TO {_lastBidderTeam}",
+                Text = string.IsNullOrEmpty(_lastBidderTeam) ? "WAITING FOR OPENING BID" : $"SELL TO {_lastBidderTeam}",
                 BackColor = Color.FromArgb(75, 50, 12),
                 ForeColor = Color.Gold,
                 Font = new Font("Segoe UI", 11F, FontStyle.Bold),
@@ -1622,15 +1696,73 @@ namespace PRSC_Player_Auction_System
             actionRow.Controls.Add(_btnSell, 1, 0);
             root.Controls.Add(actionRow, 0, 3);
 
+            var timerControlRow = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 1,
+                ColumnCount = 3,
+                Margin = new Padding(0, 4, 0, 0)
+            };
+            timerControlRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34));
+            timerControlRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));
+            timerControlRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));
+
+            _btnPauseTimer = new Button
+            {
+                Dock = DockStyle.Fill,
+                Text = "PAUSE TIMER",
+                BackColor = Color.FromArgb(55, 40, 12),
+                ForeColor = Color.Gold,
+                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 0, 6, 0)
+            };
+            _btnPauseTimer.FlatAppearance.BorderColor = Color.Gold;
+            _btnPauseTimer.FlatAppearance.BorderSize = 1;
+            _btnPauseTimer.Click += (s, e) => ToggleTimerPause();
+
+            _btnResetTimer = new Button
+            {
+                Dock = DockStyle.Fill,
+                Text = $"RESET TO {_timeLimitSeconds}",
+                BackColor = Color.FromArgb(48, 16, 16),
+                ForeColor = Color.FromArgb(255, 220, 220),
+                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(6, 0, 0, 0)
+            };
+            _btnResetTimer.FlatAppearance.BorderColor = Color.FromArgb(220, 55, 55);
+            _btnResetTimer.FlatAppearance.BorderSize = 1;
+            _btnResetTimer.Click += (s, e) => ResetPopupTimer();
+
+            _btnCutAuction = new Button
+            {
+                Dock = DockStyle.Fill,
+                Text = "CUT AUCTION",
+                BackColor = Color.FromArgb(40, 40, 40),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(6, 0, 0, 0)
+            };
+            _btnCutAuction.FlatAppearance.BorderColor = Color.FromArgb(150, 150, 150);
+            _btnCutAuction.FlatAppearance.BorderSize = 1;
+            _btnCutAuction.Click += (s, e) => CancelAuctionFromPopup();
+
+            timerControlRow.Controls.Add(_btnPauseTimer, 0, 0);
+            timerControlRow.Controls.Add(_btnResetTimer, 1, 0);
+            timerControlRow.Controls.Add(_btnCutAuction, 2, 0);
+            root.Controls.Add(timerControlRow, 0, 4);
+
             var lblHint = new Label
             {
                 Dock = DockStyle.Fill,
-                Text = "Press Enter to submit this team's bid. If this team is late, timer expiry auto-sells to the previous bidder.",
+                Text = "Press Enter to submit this team's bid. Use Pause/Resume or Reset in emergencies. If time expires, the player is auto-sold to the previous bidder.",
                 ForeColor = Color.FromArgb(200, 200, 210),
                 Font = new Font("Segoe UI", 9.5F),
                 TextAlign = ContentAlignment.TopLeft
             };
-            root.Controls.Add(lblHint, 0, 4);
+            root.Controls.Add(lblHint, 0, 5);
 
             Shown += (s, e) =>
             {
@@ -1769,11 +1901,57 @@ namespace PRSC_Player_Auction_System
             Close();
         }
 
+        private void ToggleTimerPause()
+        {
+            _timerPaused = !_timerPaused;
+
+            if (_timerPaused)
+                _timer.Stop();
+            else
+                _timer.Start();
+
+            UpdateTimerUi();
+        }
+
+        private void ResetPopupTimer()
+        {
+            _remainingSeconds = _timeLimitSeconds;
+
+            if (!_timerPaused && !_timer.Enabled)
+                _timer.Start();
+
+            UpdateTimerUi();
+        }
+
+        private void UpdateTimerUi()
+        {
+            _lblTimer.Text = _remainingSeconds.ToString();
+            _lblTimer.ForeColor = _timerPaused
+                ? Color.Gold
+                : _remainingSeconds <= 5 ? Color.FromArgb(220, 55, 55) : _accentColor;
+
+            if (_btnPauseTimer != null)
+                _btnPauseTimer.Text = _timerPaused ? "RESUME TIMER" : "PAUSE TIMER";
+        }
+
+        private void CancelAuctionFromPopup()
+        {
+            if (MessageBox.Show(
+                "Cut this auction now?\nThe player will remain unsold.",
+                "Confirm Cut Auction",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+
+            Action = BidTurnAction.CancelAuction;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
             _remainingSeconds--;
-            _lblTimer.Text = _remainingSeconds.ToString();
-            _lblTimer.ForeColor = _remainingSeconds <= 5 ? Color.FromArgb(220, 55, 55) : _accentColor;
+            UpdateTimerUi();
 
             if (_remainingSeconds > 0) return;
 

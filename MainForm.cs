@@ -432,6 +432,19 @@ namespace PRSC_Player_Auction_System
     public partial class MainForm : Form
     {
         private List<Player> players = new List<Player>();
+        private LastBidSnapshot _lastBidSnapshot;
+        private int? _lastSelectedPlayerId;
+
+        private sealed class LastBidSnapshot
+        {
+            public int PlayerId { get; set; }
+            public decimal PreviousSoldPrice { get; set; }
+            public string PreviousAssignedTeam { get; set; } = "—";
+            public string PreviousStatus { get; set; } = "Available";
+            public string PreviousLastBidder { get; set; } = "";
+            public decimal PreviousTeamAFund { get; set; }
+            public decimal PreviousTeamBFund { get; set; }
+        }
 
         // ── Fund properties ───────────────────────────────────────────────
         public decimal TeamAFund
@@ -488,6 +501,8 @@ namespace PRSC_Player_Auction_System
             if (dgvPlayers == null) return;
             dgvPlayers.AutoGenerateColumns = false;
             if (dgvPlayers.Columns.Count > 0) return;
+            dgvPlayers.SelectionChanged += (s, e) => TrackSelectedPlayer();
+            dgvPlayers.DataBindingComplete += (s, e) => RestoreGridSelection();
 
             AddColumn("#", "Id", 5, DataGridViewContentAlignment.MiddleCenter);
             AddColumn("Player Name", "Name", 22, DataGridViewContentAlignment.MiddleCenter);
@@ -555,13 +570,16 @@ namespace PRSC_Player_Auction_System
         {
             if (dgvPlayers == null) return;
             dgvPlayers.DataSource = new BindingSource { DataSource = players };
+            RestoreGridSelection();
         }
 
         public void RefreshGrid()
         {
             if (dgvPlayers == null) return;
+            TrackSelectedPlayer();
             if (dgvPlayers.DataSource is BindingSource bs) bs.ResetBindings(false);
             else BindGrid();
+            RestoreGridSelection();
             UpdateStats();
         }
 
@@ -570,10 +588,42 @@ namespace PRSC_Player_Auction_System
             if (players == null) return;
             int total = players.Count;
             int sold = players.Count(p => p.IsSold);
+            int available = total - sold;
             if (lblSoldPlayersCount != null)
                 lblSoldPlayersCount.Text = $"Sold: {sold} / {total}";
             if (lblStatusBar != null)
-                lblStatusBar.Text = $"  Players: {total}  |  Sold: {sold}  |  Available: {total - sold}";
+            {
+                var selected = GetSelectedPlayer();
+                string selectedText = selected == null
+                    ? "No player selected"
+                    : $"Selected: {selected.Name}";
+                lblStatusBar.Text = $"  Players: {total}  |  Sold: {sold}  |  Available: {available}  |  {selectedText}";
+            }
+        }
+
+        private void TrackSelectedPlayer()
+        {
+            var player = GetSelectedPlayer();
+            _lastSelectedPlayerId = player?.Id;
+            UpdateStats();
+        }
+
+        private void RestoreGridSelection()
+        {
+            if (dgvPlayers == null || dgvPlayers.Rows.Count == 0) return;
+
+            foreach (DataGridViewRow row in dgvPlayers.Rows)
+            {
+                if (!(row.DataBoundItem is Player player)) continue;
+                if (_lastSelectedPlayerId.HasValue && player.Id != _lastSelectedPlayerId.Value) continue;
+
+                row.Selected = true;
+                dgvPlayers.CurrentCell = row.Cells[0];
+                return;
+            }
+
+            dgvPlayers.Rows[0].Selected = true;
+            dgvPlayers.CurrentCell = dgvPlayers.Rows[0].Cells[0];
         }
 
         // ── Cell formatting ───────────────────────────────────────────────
@@ -703,9 +753,43 @@ namespace PRSC_Player_Auction_System
             using (var auction = new FullScreenAuctionForm(picked, this))
                 auction.ShowDialog();
 
-            // Reload fully from DB so player states and team funds are in sync
             try { LoadFromDatabase(); }
             catch { RefreshGrid(); }
+        }
+
+        private void btnUndoLastBid_Click(object sender, EventArgs e)
+        {
+            if (_lastBidSnapshot == null)
+            {
+                ShowInfo("No auction change available to undo.");
+                return;
+            }
+
+            var player = players.FirstOrDefault(p => p.Id == _lastBidSnapshot.PlayerId);
+            if (player == null)
+            {
+                ShowInfo("The last-bid player was not found.");
+                _lastBidSnapshot = null;
+                return;
+            }
+
+            player.SoldPrice = _lastBidSnapshot.PreviousSoldPrice;
+            player.AssignedTeam = _lastBidSnapshot.PreviousAssignedTeam ?? "—";
+            player.Status = _lastBidSnapshot.PreviousStatus ?? "Available";
+            TeamAFund = _lastBidSnapshot.PreviousTeamAFund;
+            TeamBFund = _lastBidSnapshot.PreviousTeamBFund;
+            player.LastBidder = _lastBidSnapshot.PreviousLastBidder ?? "";
+            player.AssignedTeam = "—";
+            player.Status = "Available";
+            player.AssignedTeam = _lastBidSnapshot.PreviousAssignedTeam ?? "—";
+            player.Status = _lastBidSnapshot.PreviousStatus ?? "Available";
+
+            try { DatabaseHelper.UpdatePlayer(player); } catch { }
+
+            _lastSelectedPlayerId = player.Id;
+            RefreshGrid();
+            lblStatusBar.Text = $"  Last auction change undone for {player.Name}.";
+            _lastBidSnapshot = null;
         }
 
         // ── RESET — FIX: also resets both team funds to DefaultFund ──────
@@ -720,6 +804,8 @@ namespace PRSC_Player_Auction_System
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning) != DialogResult.Yes)
                 return;
+
+            _lastBidSnapshot = null;
 
             // 1. Reset all players in DB
             try { DatabaseHelper.ResetAllPlayers(); } catch { }
@@ -975,6 +1061,34 @@ namespace PRSC_Player_Auction_System
             // Fallback: use index
             int idx = row.Index;
             return (idx >= 0 && idx < players.Count) ? players[idx] : null;
+        }
+
+        public void RecordLastBidState(
+            Player player,
+            decimal previousSoldPrice,
+            string previousAssignedTeam,
+            string previousStatus,
+            string previousLastBidder)
+        {
+            if (player == null) return;
+
+            _lastBidSnapshot = new LastBidSnapshot
+            {
+                PlayerId = player.Id,
+                PreviousSoldPrice = previousSoldPrice,
+                PreviousAssignedTeam = previousAssignedTeam ?? "—",
+                PreviousStatus = previousStatus ?? "Available",
+                PreviousLastBidder = previousLastBidder ?? "",
+                PreviousTeamAFund = TeamAFund,
+                PreviousTeamBFund = TeamBFund
+            };
+        }
+
+        public void ClearLastBidState(int playerId)
+        {
+            if (_lastBidSnapshot == null) return;
+            if (_lastBidSnapshot.PlayerId == playerId)
+                _lastBidSnapshot = null;
         }
 
         private void ShowInfo(string msg) =>
