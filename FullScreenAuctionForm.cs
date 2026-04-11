@@ -21,8 +21,18 @@ namespace PRSC_Player_Auction_System
         private VideoView _videoView;
         private Timer _videoCheckTimer;
 
+        // ── TIMER SYSTEM ────────────────────────────────────────────────
+        private Timer _auctionTimer;
+        private int _remainingSeconds = 15;
+        private const int AUCTION_TIME_LIMIT = 15;
+        private bool _timerStarted = false;
+        private string _lastBidderTeam = "";
+        private string _activeBidTeam = "";
+        private bool _popupBiddingActive = false;
+
         // ── UI refs needed after build ───────────────────────────────────
         private Panel _pnlBidding;
+        private Panel _pnlTimer;
         private Label _lblPlayerName;
         private Label _lblPosition;
         private Label _lblCurrentPrice;
@@ -30,12 +40,18 @@ namespace PRSC_Player_Auction_System
         private Label _lblTeamBFund;
         private Label _lblTeamAName;
         private Label _lblTeamBName;
+        private Panel _teamACard;
+        private Panel _teamBCard;
+        private Label _lblTimerCount;
+        private Label _lblTimerStatus;
+        private Panel _timerProgressBar;
         private Button _btnPlus1000, _btnMinus1000;
         private Button _btnPlus500, _btnMinus500;
         private Button _btnPlus200, _btnMinus200;
         private Button _btnPlus300, _btnMinus300;
         private Button _btnSellToA, _btnSellToB;
         private Button _btnClose, _btnSkipVideo;
+        private Button _btnTimerStop, _btnTimerReset;
         private TextBox _txtCustomBid;
         private Button _btnCustomBid;
 
@@ -56,6 +72,8 @@ namespace PRSC_Player_Auction_System
         static readonly Color BLUE_BTN = Color.FromArgb(10, 30, 120);
         static readonly Color RED = Color.FromArgb(220, 55, 55);
         static readonly Color RED_BTN = Color.FromArgb(100, 20, 20);
+        static readonly Color ORANGE = Color.FromArgb(255, 140, 0);
+        static readonly Color ORANGE_BG = Color.FromArgb(40, 20, 0);
         static readonly Color DIM = Color.FromArgb(110, 110, 130);
         static readonly Color WHITE = Color.FromArgb(235, 235, 240);
 
@@ -67,6 +85,7 @@ namespace PRSC_Player_Auction_System
             _player = player;
             _mainForm = mainForm;
             _player.CurrentPrice = _player.BasePrice;
+            _player.LastBidder = "";
 
             this.BackColor = BG;
             this.FormBorderStyle = FormBorderStyle.None;
@@ -86,9 +105,118 @@ namespace PRSC_Player_Auction_System
             }
 
             BuildUI();
+            InitializeTimer();
+            _activeBidTeam = _mainForm.TeamAName;
             UpdatePriceDisplay();
             UpdateFundDisplay();
+            UpdateActiveBidTeamUI();
             StartVideo();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  TIMER INITIALIZATION
+        // ═══════════════════════════════════════════════════════════════
+        private void InitializeTimer()
+        {
+            _auctionTimer = new Timer { Interval = 1000 }; // 1 second
+            _auctionTimer.Tick += AuctionTimer_Tick;
+        }
+
+        private void AuctionTimer_Tick(object sender, EventArgs e)
+        {
+            _remainingSeconds--;
+            UpdateTimerDisplay();
+
+            if (_remainingSeconds <= 0)
+            {
+                _auctionTimer.Stop();
+                AutoSellToLastBidder();
+            }
+        }
+
+        private void StartAuctionTimer()
+        {
+            if (!_timerStarted)
+            {
+                _timerStarted = true;
+                _remainingSeconds = AUCTION_TIME_LIMIT;
+                UpdateTimerDisplay();
+                _auctionTimer.Start();
+                _lblTimerStatus.ForeColor = ORANGE;
+                UpdateActiveBidTeamUI();
+            }
+        }
+
+        private void ResetAuctionTimer()
+        {
+            _remainingSeconds = AUCTION_TIME_LIMIT;
+            UpdateTimerDisplay();
+
+            if (_timerStarted)
+            {
+                _auctionTimer.Stop();
+                _auctionTimer.Start();
+            }
+        }
+
+        private void StopAuctionTimer()
+        {
+            _auctionTimer.Stop();
+            _lblTimerStatus.ForeColor = DIM;
+            UpdateActiveBidTeamUI();
+        }
+
+        private void ManualResetTimer()
+        {
+            _auctionTimer.Stop();
+            _timerStarted = false;
+            _remainingSeconds = AUCTION_TIME_LIMIT;
+            UpdateTimerDisplay();
+            _lblTimerStatus.ForeColor = DIM;
+            UpdateActiveBidTeamUI();
+        }
+
+        private void UpdateTimerDisplay()
+        {
+            _lblTimerCount.Text = _remainingSeconds.ToString();
+
+            // Update progress bar width
+            int maxWidth = _pnlTimer.Width - 32; // Account for padding
+            int progressWidth = (int)((double)_remainingSeconds / AUCTION_TIME_LIMIT * maxWidth);
+            _timerProgressBar.Width = Math.Max(0, progressWidth);
+
+            // Change color based on time remaining
+            if (_remainingSeconds <= 5)
+            {
+                _lblTimerCount.ForeColor = RED;
+                _timerProgressBar.BackColor = RED;
+            }
+            else if (_remainingSeconds <= 10)
+            {
+                _lblTimerCount.ForeColor = ORANGE;
+                _timerProgressBar.BackColor = ORANGE;
+            }
+            else
+            {
+                _lblTimerCount.ForeColor = GREEN;
+                _timerProgressBar.BackColor = GREEN;
+            }
+        }
+
+        private void AutoSellToLastBidder()
+        {
+            _popupBiddingActive = false;
+
+            if (string.IsNullOrEmpty(_lastBidderTeam))
+            {
+                MessageBox.Show(
+                    "⚠  No bids placed yet!\nTimer expired without any bids.",
+                    "No Bids", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                SafeClose();
+                return;
+            }
+
+            SellToLastBidder(true);
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -173,29 +301,32 @@ namespace PRSC_Player_Auction_System
             root.Controls.Add(content, 0, 1);
 
             // ─── TEAM A CARD ─────────────────────────────────────────
-            content.Controls.Add(BuildTeamCard(
+            _teamACard = BuildTeamCard(
                 "TEAM A", _mainForm.TeamAName, _mainForm.TeamAFund,
-                GREEN, GREEN_BG, out _lblTeamAName, out _lblTeamAFund), 0, 0);
+                GREEN, GREEN_BG, out _lblTeamAName, out _lblTeamAFund);
+            content.Controls.Add(_teamACard, 0, 0);
 
             // ─── TEAM B CARD ─────────────────────────────────────────
-            content.Controls.Add(BuildTeamCard(
+            _teamBCard = BuildTeamCard(
                 "TEAM B", _mainForm.TeamBName, _mainForm.TeamBFund,
-                BLUE, BLUE_BG, out _lblTeamBName, out _lblTeamBFund), 2, 0);
+                BLUE, BLUE_BG, out _lblTeamBName, out _lblTeamBFund);
+            content.Controls.Add(_teamBCard, 2, 0);
 
             // ─── CENTRE PANEL ────────────────────────────────────────
             var centre = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                RowCount = 4,
+                RowCount = 5,
                 ColumnCount = 1,
                 BackColor = Color.Transparent,
                 Padding = new Padding(10, 0, 10, 0),
                 Margin = Padding.Empty
             };
-            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 26));  // player card
-            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 32));  // price card
-            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 25));  // bid buttons
-            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 17));  // sell row
+            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 22));  // player card
+            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 28));  // price card
+            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 14));  // TIMER CARD
+            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 21));  // bid buttons
+            centre.RowStyles.Add(new RowStyle(SizeType.Percent, 15));  // sell row
             content.Controls.Add(centre, 1, 0);
 
             // ── PLAYER INFO CARD ─────────────────────────────────────
@@ -290,6 +421,138 @@ namespace PRSC_Player_Auction_System
             priceCard.Controls.Add(lblBase);
             centre.Controls.Add(priceCard, 0, 1);
 
+            // ══════════════════════════════════════════════════════════
+            //  TIMER CARD
+            // ══════════════════════════════════════════════════════════
+            _pnlTimer = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = ORANGE_BG,
+                Margin = new Padding(0, 0, 0, 8)
+            };
+            DrawBorder(_pnlTimer, ORANGE, 2);
+
+            // Timer layout
+            var timerLayout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 1,
+                ColumnCount = 3,
+                BackColor = Color.Transparent,
+                Padding = new Padding(16, 8, 16, 8),
+                Margin = Padding.Empty
+            };
+            timerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
+            timerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40));
+            timerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
+
+            // Left: Timer count
+            var timerCountPanel = new Panel { Dock = DockStyle.Fill, BackColor = Color.Transparent };
+
+            _lblTimerCount = new Label
+            {
+                Text = "15",
+                ForeColor = GREEN,
+                Font = new Font("Impact", 42F),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill
+            };
+
+            var lblSeconds = new Label
+            {
+                Text = "SECONDS",
+                ForeColor = DIM,
+                Font = new Font("Segoe UI", 7F, FontStyle.Bold),
+                TextAlign = ContentAlignment.TopCenter,
+                Dock = DockStyle.Bottom,
+                Height = 14
+            };
+
+            timerCountPanel.Controls.Add(_lblTimerCount);
+            timerCountPanel.Controls.Add(lblSeconds);
+            timerLayout.Controls.Add(timerCountPanel, 0, 0);
+
+            // Center: Progress bar area
+            var progressPanel = new Panel { Dock = DockStyle.Fill, BackColor = Color.Transparent };
+
+            _lblTimerStatus = new Label
+            {
+                Text = "⏱  WAITING FOR FIRST BID",
+                ForeColor = DIM,
+                Font = new Font("Segoe UI", 8F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Top,
+                Height = 20
+            };
+
+            var progressContainer = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(15, 15, 20),
+                Padding = new Padding(0, 8, 0, 8)
+            };
+            DrawBorder(progressContainer, BORDER, 1);
+
+            _timerProgressBar = new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = progressContainer.Width - 32,
+                BackColor = GREEN,
+                Margin = Padding.Empty
+            };
+
+            progressContainer.Controls.Add(_timerProgressBar);
+            progressPanel.Controls.Add(_lblTimerStatus);
+            progressPanel.Controls.Add(progressContainer);
+            timerLayout.Controls.Add(progressPanel, 1, 0);
+
+            // Right: Control buttons
+            var controlPanel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2,
+                ColumnCount = 1,
+                BackColor = Color.Transparent,
+                Padding = Padding.Empty
+            };
+            controlPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+            controlPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+
+            _btnTimerStop = new Button
+            {
+                Text = "⏸  PAUSE",
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(60, 40, 10),
+                ForeColor = ORANGE,
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Margin = new Padding(2, 2, 2, 2)
+            };
+            _btnTimerStop.FlatAppearance.BorderSize = 1;
+            _btnTimerStop.FlatAppearance.BorderColor = ORANGE;
+
+            _btnTimerReset = new Button
+            {
+                Text = "↻  RESET",
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(50, 20, 20),
+                ForeColor = RED,
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Margin = new Padding(2, 2, 2, 2)
+            };
+            _btnTimerReset.FlatAppearance.BorderSize = 1;
+            _btnTimerReset.FlatAppearance.BorderColor = RED;
+
+            controlPanel.Controls.Add(_btnTimerStop, 0, 0);
+            controlPanel.Controls.Add(_btnTimerReset, 0, 1);
+            timerLayout.Controls.Add(controlPanel, 2, 0);
+
+            _pnlTimer.Controls.Add(timerLayout);
+            centre.Controls.Add(_pnlTimer, 0, 2);
+
             // ── BID BUTTONS (2 rows × 4 cols) ────────────────────────
             var bidPanel = new Panel
             {
@@ -330,7 +593,7 @@ namespace PRSC_Player_Auction_System
             bidGrid.Controls.Add(_btnMinus200, 3, 1);
 
             bidPanel.Controls.Add(bidGrid);
-            centre.Controls.Add(bidPanel, 0, 2);
+            centre.Controls.Add(bidPanel, 0, 3);
 
             // ── SELL ROW ─────────────────────────────────────────────
             var sellRow = new TableLayoutPanel
@@ -375,6 +638,7 @@ namespace PRSC_Player_Auction_System
                 if (string.IsNullOrWhiteSpace(_txtCustomBid.Text))
                 { _txtCustomBid.Text = "Custom amount"; _txtCustomBid.ForeColor = DIM; }
             };
+            _txtCustomBid.KeyDown += TxtCustomBid_KeyDown;
 
             _btnCustomBid = new Button
             {
@@ -393,7 +657,7 @@ namespace PRSC_Player_Auction_System
             sellRow.Controls.Add(_btnSellToB, 1, 0);
             sellRow.Controls.Add(_txtCustomBid, 2, 0);
             sellRow.Controls.Add(_btnCustomBid, 3, 0);
-            centre.Controls.Add(sellRow, 0, 3);
+            centre.Controls.Add(sellRow, 0, 4);
 
             // ══════════════════════════════════════════════════════════
             //  BOTTOM FUND BAR
@@ -495,6 +759,10 @@ namespace PRSC_Player_Auction_System
             _btnCustomBid.Click += BtnCustomBid_Click;
             _btnClose.Click += (s, e) => SafeClose();
             _btnSkipVideo.Click += (s, e) => ShowBiddingPanel();
+            _btnTimerStop.Click += (s, e) => StopAuctionTimer();
+            _btnTimerReset.Click += (s, e) => ManualResetTimer();
+            WireBidderSelect(_teamACard, _mainForm.TeamAName);
+            WireBidderSelect(_teamBCard, _mainForm.TeamBName);
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -717,15 +985,15 @@ namespace PRSC_Player_Auction_System
         }
 
         // ═══════════════════════════════════════════════════════════════
-        //  SELL EVENTS  (logic unchanged)
+        //  SELL EVENTS
         // ═══════════════════════════════════════════════════════════════
         private void BtnSellToA_Click(object sender, EventArgs e) =>
-            SellTo(_mainForm.TeamAName, _mainForm.TeamAFund, f => _mainForm.TeamAFund = f);
+            SellTo(_mainForm.TeamAName, _mainForm.TeamAFund, f => _mainForm.TeamAFund = f, false);
 
         private void BtnSellToB_Click(object sender, EventArgs e) =>
-            SellTo(_mainForm.TeamBName, _mainForm.TeamBFund, f => _mainForm.TeamBFund = f);
+            SellTo(_mainForm.TeamBName, _mainForm.TeamBFund, f => _mainForm.TeamBFund = f, false);
 
-        private void SellTo(string teamName, decimal fund, Action<decimal> setFund)
+        private void SellTo(string teamName, decimal fund, Action<decimal> setFund, bool isAutoSell)
         {
             if (fund < _player.CurrentPrice)
             {
@@ -734,6 +1002,10 @@ namespace PRSC_Player_Auction_System
                     $"Required : BDT {_player.CurrentPrice:N0}\n" +
                     $"Available: BDT {fund:N0}",
                     "Insufficient Funds", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (isAutoSell)
+                    SafeClose();
+
                 return;
             }
 
@@ -745,33 +1017,22 @@ namespace PRSC_Player_Auction_System
             try { DatabaseHelper.AssignPlayerToTeam(_player.Id, teamName, _player.SoldPrice); }
             catch { }
 
+            string saleType = isAutoSell ? "⏱ AUTO-SOLD" : "✅ SOLD";
             MessageBox.Show(
-                $"✅  {_player.Name} sold to {teamName}\nfor BDT {_player.SoldPrice:N0}",
-                "Player Sold!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                $"{saleType}\n\n{_player.Name} → {teamName}\nPrice: BDT {_player.SoldPrice:N0}",
+                isAutoSell ? "Timer Expired - Auto Sold!" : "Player Sold!",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
 
             SafeClose();
         }
 
         // ═══════════════════════════════════════════════════════════════
-        //  CUSTOM BID  (logic unchanged)
+        //  CUSTOM BID
         // ═══════════════════════════════════════════════════════════════
         private void BtnCustomBid_Click(object sender, EventArgs e)
         {
-            string t = _txtCustomBid.Text.Trim();
-            if (string.IsNullOrWhiteSpace(t) || t == "Custom amount")
-            { MessageBox.Show("Please enter a custom bid amount.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            if (!decimal.TryParse(t, out decimal amt))
-            {
-                MessageBox.Show("Please enter a valid number.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _txtCustomBid.Text = "Custom amount"; _txtCustomBid.ForeColor = DIM; return;
-            }
-            if (amt < _player.BasePrice)
-            { MessageBox.Show($"Bid must be at least BDT {_player.BasePrice:N0}", "Bid Too Low", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-
-            _player.CurrentPrice = amt;
-            _txtCustomBid.Text = "Custom amount";
-            _txtCustomBid.ForeColor = DIM;
-            UpdatePriceDisplay();
+            TryPlaceBidFromInput();
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -779,10 +1040,269 @@ namespace PRSC_Player_Auction_System
         // ═══════════════════════════════════════════════════════════════
         private void ChangePrice(decimal delta)
         {
+            if (_popupBiddingActive) return;
+
+            if (delta > 0)
+            {
+                TryPlaceFirstBid(_player.CurrentPrice + delta);
+                return;
+            }
+
             decimal n = _player.CurrentPrice + delta;
             if (n < _player.BasePrice) return;
             _player.CurrentPrice = n;
             UpdatePriceDisplay();
+        }
+
+        private void TxtCustomBid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+            TryPlaceBidFromInput();
+        }
+
+        private void TryPlaceBidFromInput()
+        {
+            string t = _txtCustomBid.Text.Trim();
+            if (string.IsNullOrWhiteSpace(t) || t == "Custom amount")
+            {
+                MessageBox.Show("Please enter a custom bid amount.", "Invalid Input",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (!decimal.TryParse(t, out decimal amt))
+            {
+                MessageBox.Show("Please enter a valid number.", "Invalid Input",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _txtCustomBid.Text = "Custom amount";
+                _txtCustomBid.ForeColor = DIM;
+                return;
+            }
+
+            TryPlaceFirstBid(amt);
+        }
+
+        private void TryPlaceFirstBid(decimal amount)
+        {
+            if (_popupBiddingActive) return;
+
+            if (!ValidateBidForTeam(_activeBidTeam, amount, true))
+                return;
+
+            ApplyBid(_activeBidTeam, amount);
+            PreparePopupMode(_activeBidTeam);
+            RunBidPopupLoop(_lastBidderTeam);
+        }
+
+        private void SetActiveBidTeam(string teamName)
+        {
+            if (_popupBiddingActive) return;
+            _activeBidTeam = teamName;
+            UpdateActiveBidTeamUI();
+        }
+
+        private void PreparePopupMode(string nextBidTeam)
+        {
+            _popupBiddingActive = true;
+            _activeBidTeam = nextBidTeam;
+            SetMainBiddingControlsEnabled(false);
+            _remainingSeconds = AUCTION_TIME_LIMIT;
+            UpdateTimerDisplay();
+            UpdateActiveBidTeamUI();
+        }
+
+        private void UpdateActiveBidTeamUI()
+        {
+            if (_lblTeamAName == null || _lblTeamBName == null || _lblTimerStatus == null) return;
+
+            bool isTeamAActive = _activeBidTeam == _mainForm.TeamAName;
+            _lblTeamAName.ForeColor = isTeamAActive ? GREEN : WHITE;
+            _lblTeamBName.ForeColor = isTeamAActive ? WHITE : BLUE;
+
+            string timerState;
+            if (_popupBiddingActive)
+                timerState = "POPUP TURN ACTIVE";
+            else if (_timerStarted && _auctionTimer != null && _auctionTimer.Enabled)
+                timerState = "TIMER ACTIVE";
+            else if (_timerStarted)
+                timerState = "TIMER PAUSED";
+            else
+                timerState = "WAITING FOR FIRST BID";
+            _lblTimerStatus.Text = $"⏱  {timerState}  |  NEXT BID: {_activeBidTeam}";
+        }
+
+        private void ApplyBid(string biddingTeam, decimal amount)
+        {
+            _player.CurrentPrice = amount;
+            _lastBidderTeam = biddingTeam;
+            _activeBidTeam = GetOppositeTeam(biddingTeam);
+            _timerStarted = true;
+            _remainingSeconds = AUCTION_TIME_LIMIT;
+
+            _txtCustomBid.Text = "Custom amount";
+            _txtCustomBid.ForeColor = DIM;
+            UpdatePriceDisplay();
+            UpdateTimerDisplay();
+            UpdateActiveBidTeamUI();
+        }
+
+        private void RunBidPopupLoop(string previousBidTeam)
+        {
+            string nextTeam = GetOppositeTeam(previousBidTeam);
+
+            while (!_isClosing && _popupBiddingActive)
+            {
+                using (var popup = new BidTurnForm(
+                    nextTeam,
+                    _player.CurrentPrice,
+                    _lastBidderTeam,
+                    AUCTION_TIME_LIMIT,
+                    GetTeamAccent(nextTeam),
+                    GetMinimumNextBid(),
+                    GetFundForTeam(nextTeam)))
+                {
+                    var dialogResult = popup.ShowDialog(this);
+                    if (dialogResult != DialogResult.OK)
+                    {
+                        _popupBiddingActive = false;
+                        SetMainBiddingControlsEnabled(true);
+                        UpdateActiveBidTeamUI();
+                        return;
+                    }
+
+                    if (popup.Action == BidTurnAction.PlaceBid)
+                    {
+                        if (!ValidateBidForTeam(nextTeam, popup.BidAmount, true))
+                            continue;
+
+                        ApplyBid(nextTeam, popup.BidAmount);
+                        nextTeam = GetOppositeTeam(nextTeam);
+                        continue;
+                    }
+
+                    if (popup.Action == BidTurnAction.SellToLastBidder)
+                    {
+                        SellToLastBidder(false);
+                        return;
+                    }
+
+                    if (popup.Action == BidTurnAction.Timeout)
+                    {
+                        AutoSellToLastBidder();
+                        return;
+                    }
+
+                    _popupBiddingActive = false;
+                    SetMainBiddingControlsEnabled(true);
+                    UpdateActiveBidTeamUI();
+                    return;
+                }
+            }
+        }
+
+        private bool ValidateBidForTeam(string teamName, decimal amount, bool showMessage)
+        {
+            bool hasPreviousBid = !string.IsNullOrEmpty(_lastBidderTeam);
+            bool invalidAmount = hasPreviousBid
+                ? amount <= _player.CurrentPrice
+                : amount < _player.CurrentPrice;
+
+            if (invalidAmount)
+            {
+                if (showMessage)
+                {
+                    string text = hasPreviousBid
+                        ? $"Bid must be higher than current bid: BDT {_player.CurrentPrice:N0}"
+                        : $"First bid must be at least current/base price: BDT {_player.CurrentPrice:N0}";
+                    MessageBox.Show(
+                        text,
+                        "Bid Too Low",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+                return false;
+            }
+
+            decimal fund = teamName == _mainForm.TeamAName ? _mainForm.TeamAFund : _mainForm.TeamBFund;
+            if (fund < amount)
+            {
+                if (showMessage)
+                {
+                    MessageBox.Show(
+                        $"⚠  {teamName} does not have enough funds!\n\n" +
+                        $"Required : BDT {amount:N0}\n" +
+                        $"Available: BDT {fund:N0}",
+                        "Insufficient Funds",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        private void SetMainBiddingControlsEnabled(bool enabled)
+        {
+            _btnPlus1000.Enabled = enabled;
+            _btnPlus500.Enabled = enabled;
+            _btnPlus300.Enabled = enabled;
+            _btnPlus200.Enabled = enabled;
+            _btnMinus1000.Enabled = enabled;
+            _btnMinus500.Enabled = enabled;
+            _btnMinus300.Enabled = enabled;
+            _btnMinus200.Enabled = enabled;
+            _btnSellToA.Enabled = enabled;
+            _btnSellToB.Enabled = enabled;
+            _btnCustomBid.Enabled = enabled;
+            _txtCustomBid.Enabled = enabled;
+            _btnTimerStop.Enabled = enabled && !_popupBiddingActive;
+            _btnTimerReset.Enabled = enabled && !_popupBiddingActive;
+        }
+
+        private decimal GetMinimumNextBid()
+        {
+            return _player.CurrentPrice + 1;
+        }
+
+        private decimal GetFundForTeam(string teamName)
+        {
+            return teamName == _mainForm.TeamAName ? _mainForm.TeamAFund : _mainForm.TeamBFund;
+        }
+
+        private Color GetTeamAccent(string teamName)
+        {
+            return teamName == _mainForm.TeamAName ? GREEN : BLUE;
+        }
+
+        private string GetOppositeTeam(string teamName)
+        {
+            return teamName == _mainForm.TeamAName ? _mainForm.TeamBName : _mainForm.TeamAName;
+        }
+
+        private void SellToLastBidder(bool isAutoSell)
+        {
+            if (_lastBidderTeam == _mainForm.TeamAName)
+            {
+                SellTo(_mainForm.TeamAName, _mainForm.TeamAFund, f => _mainForm.TeamAFund = f, isAutoSell);
+                return;
+            }
+
+            if (_lastBidderTeam == _mainForm.TeamBName)
+            {
+                SellTo(_mainForm.TeamBName, _mainForm.TeamBFund, f => _mainForm.TeamBFund = f, isAutoSell);
+            }
+        }
+
+        private void WireBidderSelect(Control control, string teamName)
+        {
+            control.Cursor = Cursors.Hand;
+            control.Click += (s, e) => SetActiveBidTeam(teamName);
+
+            foreach (Control child in control.Controls)
+                WireBidderSelect(child, teamName);
         }
 
         private void UpdatePriceDisplay()
@@ -799,6 +1319,16 @@ namespace PRSC_Player_Auction_System
         private void SafeClose()
         {
             _isClosing = true;
+            _popupBiddingActive = false;
+
+            // Stop and cleanup timer
+            if (_auctionTimer != null)
+            {
+                _auctionTimer.Stop();
+                _auctionTimer.Dispose();
+                _auctionTimer = null;
+            }
+
             CleanupVlc();
             try { this.Close(); } catch { }
         }
@@ -822,10 +1352,36 @@ namespace PRSC_Player_Auction_System
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
-        { base.OnFormClosed(e); _isClosing = true; CleanupVlc(); }
+        {
+            base.OnFormClosed(e);
+            _isClosing = true;
+
+            if (_auctionTimer != null)
+            {
+                _auctionTimer.Stop();
+                _auctionTimer.Dispose();
+            }
+
+            CleanupVlc();
+        }
 
         protected override void Dispose(bool disposing)
-        { if (disposing) { _isClosing = true; CleanupVlc(); } base.Dispose(disposing); }
+        {
+            if (disposing)
+            {
+                _isClosing = true;
+
+                if (_auctionTimer != null)
+                {
+                    _auctionTimer.Stop();
+                    _auctionTimer.Dispose();
+                    _auctionTimer = null;
+                }
+
+                CleanupVlc();
+            }
+            base.Dispose(disposing);
+        }
 
         private void InitializeComponent()
         {
@@ -837,5 +1393,400 @@ namespace PRSC_Player_Auction_System
         }
 
         private void FullScreenAuctionForm_Load(object sender, EventArgs e) { }
+    }
+
+    internal enum BidTurnAction
+    {
+        None,
+        PlaceBid,
+        SellToLastBidder,
+        Timeout
+    }
+
+    internal sealed class BidTurnForm : Form
+    {
+        private readonly string _teamName;
+        private readonly decimal _currentPrice;
+        private readonly string _lastBidderTeam;
+        private readonly int _timeLimitSeconds;
+        private readonly Color _accentColor;
+        private readonly decimal _minimumBid;
+        private readonly decimal _availableFund;
+        private readonly Timer _timer;
+
+        private int _remainingSeconds;
+        private Label _lblTimer;
+        private TextBox _txtBid;
+        private Button _btnSell;
+        private Button[] _shortcutButtons;
+        private decimal[] _shortcutIncrements;
+        private int _selectedShortcutIndex;
+        private bool _shortcutSelectionPrimed = true;
+
+        public BidTurnAction Action { get; private set; }
+        public decimal BidAmount { get; private set; }
+
+        public BidTurnForm(
+            string teamName,
+            decimal currentPrice,
+            string lastBidderTeam,
+            int timeLimitSeconds,
+            Color accentColor,
+            decimal minimumBid,
+            decimal availableFund)
+        {
+            _teamName = teamName;
+            _currentPrice = currentPrice;
+            _lastBidderTeam = lastBidderTeam;
+            _timeLimitSeconds = timeLimitSeconds;
+            _accentColor = accentColor;
+            _minimumBid = minimumBid;
+            _availableFund = availableFund;
+            _remainingSeconds = timeLimitSeconds;
+
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            StartPosition = FormStartPosition.CenterParent;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            ControlBox = false;
+            ShowInTaskbar = false;
+            TopMost = true;
+            KeyPreview = true;
+            BackColor = Color.FromArgb(18, 18, 24);
+            ClientSize = new Size(500, 340);
+            Text = $"{teamName} Bidding";
+
+            BuildUi();
+            KeyDown += BidTurnForm_KeyDown;
+
+            _timer = new Timer { Interval = 1000 };
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+        }
+
+        private void BuildUi()
+        {
+            var root = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 5,
+                ColumnCount = 1,
+                Padding = new Padding(18),
+                BackColor = Color.Transparent
+            };
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 58));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 64));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 84));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 72));
+            root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            Controls.Add(root);
+
+            var header = new Panel { Dock = DockStyle.Fill, BackColor = Color.FromArgb(26, 26, 36) };
+            var headerLine = new Panel { Dock = DockStyle.Top, Height = 3, BackColor = _accentColor };
+            header.Controls.Add(headerLine);
+
+            var lblTitle = new Label
+            {
+                Dock = DockStyle.Fill,
+                Text = $"{_teamName} TURN",
+                ForeColor = _accentColor,
+                Font = new Font("Impact", 26F),
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            header.Controls.Add(lblTitle);
+            root.Controls.Add(header, 0, 0);
+
+            var info = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 1,
+                ColumnCount = 2,
+                BackColor = Color.Transparent
+            };
+            info.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58));
+            info.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42));
+
+            var lblCurrent = new Label
+            {
+                Dock = DockStyle.Fill,
+                Text = $"Current Bid: BDT {_currentPrice:N0}\r\nMinimum Next: BDT {_minimumBid:N0}\r\nAvailable Fund: BDT {_availableFund:N0}",
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            _lblTimer = new Label
+            {
+                Dock = DockStyle.Fill,
+                Text = _remainingSeconds.ToString(),
+                ForeColor = _accentColor,
+                Font = new Font("Impact", 36F),
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            info.Controls.Add(lblCurrent, 0, 0);
+            info.Controls.Add(_lblTimer, 1, 0);
+            root.Controls.Add(info, 0, 1);
+
+            var bidPanel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2,
+                ColumnCount = 1,
+                BackColor = Color.Transparent
+            };
+            bidPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+            bidPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+            _txtBid = new TextBox
+            {
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 15F, FontStyle.Bold),
+                TextAlign = HorizontalAlignment.Center,
+                Text = _minimumBid.ToString("N0")
+            };
+            _txtBid.KeyDown += TxtBid_KeyDown;
+            _txtBid.TextChanged += (s, e) =>
+            {
+                if (_txtBid.Focused)
+                {
+                    _shortcutSelectionPrimed = false;
+                    UpdateShortcutSelectionUi();
+                }
+            };
+
+            var shortcuts = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 1,
+                ColumnCount = 4
+            };
+            _shortcutIncrements = new decimal[] { 200, 300, 500, 1000 };
+            _shortcutButtons = new Button[4];
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+            _shortcutButtons[0] = MakeShortcut("+200", 200);
+            _shortcutButtons[1] = MakeShortcut("+300", 300);
+            _shortcutButtons[2] = MakeShortcut("+500", 500);
+            _shortcutButtons[3] = MakeShortcut("+1000", 1000);
+            shortcuts.Controls.Add(_shortcutButtons[0], 0, 0);
+            shortcuts.Controls.Add(_shortcutButtons[1], 1, 0);
+            shortcuts.Controls.Add(_shortcutButtons[2], 2, 0);
+            shortcuts.Controls.Add(_shortcutButtons[3], 3, 0);
+
+            bidPanel.Controls.Add(_txtBid, 0, 0);
+            bidPanel.Controls.Add(shortcuts, 0, 1);
+            root.Controls.Add(bidPanel, 0, 2);
+
+            var actionRow = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 1,
+                ColumnCount = 2
+            };
+            actionRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58));
+            actionRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42));
+
+            var btnPlaceBid = new Button
+            {
+                Dock = DockStyle.Fill,
+                Text = "PLACE BID",
+                BackColor = _accentColor,
+                ForeColor = Color.Black,
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat
+            };
+            btnPlaceBid.FlatAppearance.BorderSize = 0;
+            btnPlaceBid.Click += (s, e) => SubmitBid();
+
+            _btnSell = new Button
+            {
+                Dock = DockStyle.Fill,
+                Text = string.IsNullOrEmpty(_lastBidderTeam) ? "WAITING FOR FIRST BID" : $"SELL TO {_lastBidderTeam}",
+                BackColor = Color.FromArgb(75, 50, 12),
+                ForeColor = Color.Gold,
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Enabled = !string.IsNullOrEmpty(_lastBidderTeam)
+            };
+            _btnSell.FlatAppearance.BorderSize = 0;
+            _btnSell.Click += (s, e) =>
+            {
+                Action = BidTurnAction.SellToLastBidder;
+                DialogResult = DialogResult.OK;
+                Close();
+            };
+
+            actionRow.Controls.Add(btnPlaceBid, 0, 0);
+            actionRow.Controls.Add(_btnSell, 1, 0);
+            root.Controls.Add(actionRow, 0, 3);
+
+            var lblHint = new Label
+            {
+                Dock = DockStyle.Fill,
+                Text = "Press Enter to submit this team's bid. If this team is late, timer expiry auto-sells to the previous bidder.",
+                ForeColor = Color.FromArgb(200, 200, 210),
+                Font = new Font("Segoe UI", 9.5F),
+                TextAlign = ContentAlignment.TopLeft
+            };
+            root.Controls.Add(lblHint, 0, 4);
+
+            Shown += (s, e) =>
+            {
+                _txtBid.Focus();
+                _txtBid.SelectAll();
+                UpdateShortcutSelectionUi();
+            };
+        }
+
+        private Button MakeShortcut(string text, decimal increment)
+        {
+            var button = new Button
+            {
+                Dock = DockStyle.Fill,
+                Text = text,
+                BackColor = Color.FromArgb(34, 34, 46),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(3)
+            };
+            button.FlatAppearance.BorderColor = _accentColor;
+            button.FlatAppearance.BorderSize = 1;
+            button.Click += (s, e) =>
+            {
+                for (int i = 0; i < _shortcutButtons.Length; i++)
+                {
+                    if (_shortcutButtons[i] != button) continue;
+                    _selectedShortcutIndex = i;
+                    break;
+                }
+
+                ApplySelectedShortcut();
+            };
+            return button;
+        }
+
+        private void BidTurnForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Left)
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                MoveShortcutSelection(-1);
+                return;
+            }
+
+            if (e.KeyCode == Keys.Right)
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                MoveShortcutSelection(1);
+                return;
+            }
+
+            if (e.KeyCode != Keys.Enter) return;
+
+            if (_shortcutSelectionPrimed)
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                ApplySelectedShortcut();
+            }
+        }
+
+        private void MoveShortcutSelection(int direction)
+        {
+            _selectedShortcutIndex = (_selectedShortcutIndex + direction + _shortcutButtons.Length) % _shortcutButtons.Length;
+            _shortcutSelectionPrimed = true;
+            UpdateShortcutSelectionUi();
+        }
+
+        private void ApplySelectedShortcut()
+        {
+            _txtBid.Text = (_currentPrice + _shortcutIncrements[_selectedShortcutIndex]).ToString("N0");
+            _txtBid.Focus();
+            _txtBid.SelectAll();
+            _shortcutSelectionPrimed = false;
+            UpdateShortcutSelectionUi();
+        }
+
+        private void UpdateShortcutSelectionUi()
+        {
+            if (_shortcutButtons == null) return;
+
+            for (int i = 0; i < _shortcutButtons.Length; i++)
+            {
+                bool isSelected = i == _selectedShortcutIndex;
+                _shortcutButtons[i].BackColor = isSelected ? _accentColor : Color.FromArgb(34, 34, 46);
+                _shortcutButtons[i].ForeColor = isSelected ? Color.Black : Color.White;
+            }
+        }
+
+        private void TxtBid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+            SubmitBid();
+        }
+
+        private void SubmitBid()
+        {
+            var raw = _txtBid.Text.Replace(",", "").Trim();
+            if (!decimal.TryParse(raw, out var amount))
+            {
+                MessageBox.Show("Please enter a valid bid amount.", "Invalid Input",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _txtBid.Focus();
+                _txtBid.SelectAll();
+                return;
+            }
+
+            if (amount < _minimumBid)
+            {
+                MessageBox.Show($"Bid must be at least BDT {_minimumBid:N0}.", "Bid Too Low",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _txtBid.Focus();
+                _txtBid.SelectAll();
+                return;
+            }
+
+            if (amount > _availableFund)
+            {
+                MessageBox.Show($"This team only has BDT {_availableFund:N0} available.", "Insufficient Funds",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _txtBid.Focus();
+                _txtBid.SelectAll();
+                return;
+            }
+
+            BidAmount = amount;
+            Action = BidTurnAction.PlaceBid;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            _remainingSeconds--;
+            _lblTimer.Text = _remainingSeconds.ToString();
+            _lblTimer.ForeColor = _remainingSeconds <= 5 ? Color.FromArgb(220, 55, 55) : _accentColor;
+
+            if (_remainingSeconds > 0) return;
+
+            Action = BidTurnAction.Timeout;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            _timer.Stop();
+            _timer.Dispose();
+            base.OnFormClosed(e);
+        }
     }
 }

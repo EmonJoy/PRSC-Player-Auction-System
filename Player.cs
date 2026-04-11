@@ -7,15 +7,18 @@ namespace PRSC_Player_Auction_System
     /// </summary>
     public class Player
     {
-        public int     Id           { get; set; }
-        public string  Name         { get; set; } = "";
-        public string  Position     { get; set; } = "";
-        public string  SkillLevel   { get; set; } = "Medium";
-        public decimal BasePrice    { get; set; }
-        public decimal SoldPrice    { get; set; }
-        public string  AssignedTeam { get; set; } = "—";
-        public string  Status       { get; set; } = "Available";
-        public string  VideoPath    { get; set; } = "";
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Position { get; set; } = "";
+        public string SkillLevel { get; set; } = "Medium";
+        public decimal BasePrice { get; set; }
+        public decimal SoldPrice { get; set; }
+        public string AssignedTeam { get; set; } = "—";
+        public string Status { get; set; } = "Available";
+        public string VideoPath { get; set; } = "";
+
+        // ── Timer tracking for auction ──────────────────────────────
+        public string LastBidder { get; set; } = "";  // Team name who bid last
 
         // ── Compatibility props used by DatabaseHelper ──────────────
         public bool IsSold
@@ -23,7 +26,6 @@ namespace PRSC_Player_Auction_System
             get => Status == "Sold";
             set => Status = value ? "Sold" : "Available";
         }
-
         public decimal CurrentPrice
         {
             get => SoldPrice > 0 ? SoldPrice : BasePrice;
