@@ -504,7 +504,7 @@ namespace PRSC_Player_Auction_System
             dgvPlayers.SelectionChanged += (s, e) => TrackSelectedPlayer();
             dgvPlayers.DataBindingComplete += (s, e) => RestoreGridSelection();
 
-            AddColumn("#", "Id", 5, DataGridViewContentAlignment.MiddleCenter);
+            AddColumn("#", "DisplayId", 5, DataGridViewContentAlignment.MiddleCenter);
             AddColumn("Player Name", "Name", 22, DataGridViewContentAlignment.MiddleCenter);
             AddColumn("Position", "Position", 13, DataGridViewContentAlignment.MiddleCenter);
             AddColumn("Skill", "SkillLevel", 10, DataGridViewContentAlignment.MiddleCenter);
@@ -540,6 +540,7 @@ namespace PRSC_Player_Auction_System
             try
             {
                 players = DatabaseHelper.GetAllPlayers() ?? new List<Player>();
+                AssignDisplayIds();
             }
             catch (Exception ex)
             {
@@ -577,10 +578,19 @@ namespace PRSC_Player_Auction_System
         {
             if (dgvPlayers == null) return;
             TrackSelectedPlayer();
+            AssignDisplayIds();
             if (dgvPlayers.DataSource is BindingSource bs) bs.ResetBindings(false);
             else BindGrid();
             RestoreGridSelection();
             UpdateStats();
+        }
+
+        private void AssignDisplayIds()
+        {
+            if (players == null) return;
+
+            for (int i = 0; i < players.Count; i++)
+                players[i].DisplayId = i + 1;
         }
 
         private void UpdateStats()
@@ -696,12 +706,21 @@ namespace PRSC_Player_Auction_System
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     var p = dlg.Result;
-                    try { p.Id = DatabaseHelper.AddPlayer(p); }
-                    catch { p.Id = players.Count > 0 ? players.Max(x => x.Id) + 1 : 1; }
-                    players.Add(p);
-                    RefreshGrid();
-                    if (dgvPlayers.Rows.Count > 0)
-                        dgvPlayers.Rows[dgvPlayers.Rows.Count - 1].Selected = true;
+                    try
+                    {
+                        p.Id = DatabaseHelper.AddPlayer(p);
+                        LoadFromDatabase();
+                        _lastSelectedPlayerId = p.Id;
+                        RestoreGridSelection();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"Failed to add player to database.\n\n{ex.Message}",
+                            "Database Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -724,8 +743,21 @@ namespace PRSC_Player_Auction_System
                     player.AssignedTeam = ed.AssignedTeam;
                     player.Status = ed.Status;
                     player.VideoPath = ed.VideoPath;
-                    try { DatabaseHelper.UpdatePlayer(player); } catch { }
-                    RefreshGrid();
+                    try
+                    {
+                        DatabaseHelper.UpdatePlayer(player);
+                        LoadFromDatabase();
+                        _lastSelectedPlayerId = player.Id;
+                        RestoreGridSelection();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"Failed to update player in database.\n\n{ex.Message}",
+                            "Database Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -738,9 +770,19 @@ namespace PRSC_Player_Auction_System
             if (MessageBox.Show($"Delete \"{player.Name}\"?", "Confirm Delete",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                try { DatabaseHelper.DeletePlayer(player.Id); } catch { }
-                players.Remove(player);
-                RefreshGrid();
+                try
+                {
+                    DatabaseHelper.DeletePlayer(player.Id);
+                    LoadFromDatabase();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Failed to delete player from database.\n\n{ex.Message}",
+                        "Database Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
             }
         }
 

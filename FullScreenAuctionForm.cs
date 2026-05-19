@@ -24,7 +24,7 @@ namespace PRSC_Player_Auction_System
         // ── TIMER SYSTEM ────────────────────────────────────────────────
         private Timer _auctionTimer;
         private int _remainingSeconds = AUCTION_TIME_LIMIT;
-        private const int AUCTION_TIME_LIMIT = 15;
+        private const int AUCTION_TIME_LIMIT = 30;
         private bool _timerStarted = false;
         private string _lastBidderTeam = "";
         private string _activeBidTeam = "";
@@ -1525,8 +1525,8 @@ namespace PRSC_Player_Auction_System
             ShowInTaskbar = false;
             TopMost = true;
             KeyPreview = true;
-            BackColor = Color.FromArgb(18, 18, 24);
-            ClientSize = new Size(500, 340);
+            BackColor = Color.FromArgb(14, 18, 28);
+            ClientSize = new Size(840, 620);
             Text = $"{teamName} Bidding";
 
             BuildUi();
@@ -1544,30 +1544,47 @@ namespace PRSC_Player_Auction_System
                 Dock = DockStyle.Fill,
                 RowCount = 6,
                 ColumnCount = 1,
-                Padding = new Padding(18),
+                Padding = new Padding(20),
                 BackColor = Color.Transparent
             };
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 58));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 64));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 84));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 72));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 52));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 96));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 146));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 186));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 88));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             Controls.Add(root);
 
-            var header = new Panel { Dock = DockStyle.Fill, BackColor = Color.FromArgb(26, 26, 36) };
-            var headerLine = new Panel { Dock = DockStyle.Top, Height = 3, BackColor = _accentColor };
+            var header = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(24, 30, 44),
+                Padding = new Padding(22, 12, 22, 12),
+                Margin = new Padding(0, 0, 0, 10)
+            };
+            var headerLine = new Panel { Dock = DockStyle.Top, Height = 4, BackColor = _accentColor };
             header.Controls.Add(headerLine);
 
             var lblTitle = new Label
             {
-                Dock = DockStyle.Fill,
-                Text = $"{_teamName} TURN",
+                Dock = DockStyle.Top,
+                Height = 38,
+                Text = $"{_teamName.ToUpperInvariant()} TURN",
                 ForeColor = _accentColor,
-                Font = new Font("Impact", 26F),
-                TextAlign = ContentAlignment.MiddleCenter
+                Font = new Font("Segoe UI Semibold", 24F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
             };
             header.Controls.Add(lblTitle);
+
+            var lblSubtitle = new Label
+            {
+                Dock = DockStyle.Fill,
+                Text = "Review the live bid, choose a quick increment, or type a custom amount.",
+                ForeColor = Color.FromArgb(208, 214, 224),
+                Font = new Font("Segoe UI", 10.5F),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            header.Controls.Add(lblSubtitle);
             root.Controls.Add(header, 0, 0);
 
             var info = new TableLayoutPanel
@@ -1575,18 +1592,50 @@ namespace PRSC_Player_Auction_System
                 Dock = DockStyle.Fill,
                 RowCount = 1,
                 ColumnCount = 2,
-                BackColor = Color.Transparent
+                BackColor = Color.Transparent,
+                Margin = new Padding(0, 0, 0, 10)
             };
-            info.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58));
-            info.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42));
+            info.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 68));
+            info.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 32));
+            info.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
-            var lblCurrent = new Label
+            var bidSummaryPanel = new Panel
             {
                 Dock = DockStyle.Fill,
-                Text = $"Current Bid: BDT {_currentPrice:N0}\r\nMinimum Next: BDT {_minimumBid:N0}\r\nAvailable Fund: BDT {_availableFund:N0}",
+                BackColor = Color.FromArgb(24, 30, 44),
+                Padding = new Padding(18, 14, 18, 14),
+                Margin = new Padding(0, 0, 10, 0)
+            };
+
+            var lblBidSummary = new Label
+            {
+                Dock = DockStyle.Fill,
+                Text =
+                    $"Current Bid: BDT {_currentPrice:N0}\r\n" +
+                    $"Minimum Next Bid: BDT {_minimumBid:N0}\r\n" +
+                    $"Available Fund: BDT {_availableFund:N0}",
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Font = new Font("Segoe UI Semibold", 16F, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleLeft
+            };
+            bidSummaryPanel.Controls.Add(lblBidSummary);
+
+            var timerPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(24, 30, 44),
+                Padding = new Padding(16, 10, 16, 10),
+                Margin = Padding.Empty
+            };
+
+            var lblTimerCaption = new Label
+            {
+                Dock = DockStyle.Top,
+                Height = 26,
+                Text = "TIME LEFT",
+                ForeColor = Color.FromArgb(188, 195, 208),
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
             _lblTimer = new Label
@@ -1594,29 +1643,49 @@ namespace PRSC_Player_Auction_System
                 Dock = DockStyle.Fill,
                 Text = _remainingSeconds.ToString(),
                 ForeColor = _accentColor,
-                Font = new Font("Impact", 36F),
+                Font = new Font("Segoe UI Semibold", 36F, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter
             };
-            info.Controls.Add(lblCurrent, 0, 0);
-            info.Controls.Add(_lblTimer, 1, 0);
+            timerPanel.Controls.Add(_lblTimer);
+            timerPanel.Controls.Add(lblTimerCaption);
+
+            info.Controls.Add(bidSummaryPanel, 0, 0);
+            info.Controls.Add(timerPanel, 1, 0);
             root.Controls.Add(info, 0, 1);
 
             var bidPanel = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                RowCount = 2,
+                RowCount = 3,
                 ColumnCount = 1,
-                BackColor = Color.Transparent
+                BackColor = Color.FromArgb(22, 27, 40),
+                Padding = new Padding(20, 16, 20, 20),
+                Margin = new Padding(0, 0, 0, 10)
             };
-            bidPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
-            bidPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            bidPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 28));
+            bidPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 56));
+            bidPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 82));
+
+            var lblBidPanelTitle = new Label
+            {
+                Dock = DockStyle.Fill,
+                Text = "QUICK BID SHORTCUTS",
+                ForeColor = Color.FromArgb(198, 205, 219),
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            bidPanel.Controls.Add(lblBidPanelTitle, 0, 0);
 
             _txtBid = new TextBox
             {
                 Dock = DockStyle.Fill,
-                Font = new Font("Segoe UI", 15F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 19F, FontStyle.Bold),
                 TextAlign = HorizontalAlignment.Center,
-                Text = _minimumBid.ToString("N0")
+                Text = _minimumBid.ToString("N0"),
+                BackColor = Color.FromArgb(13, 18, 28),
+                ForeColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Margin = new Padding(0, 0, 0, 12)
             };
             _txtBid.KeyDown += TxtBid_KeyDown;
             _txtBid.TextChanged += (s, e) =>
@@ -1627,30 +1696,35 @@ namespace PRSC_Player_Auction_System
                     UpdateShortcutSelectionUi();
                 }
             };
+            bidPanel.Controls.Add(_txtBid, 0, 1);
 
             var shortcuts = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 RowCount = 1,
-                ColumnCount = 4
+                ColumnCount = 5,
+                Margin = new Padding(0, 8, 0, 0),
+                Padding = Padding.Empty
             };
-            _shortcutIncrements = new decimal[] { 200, 300, 500, 1000 };
-            _shortcutButtons = new Button[4];
-            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
-            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
-            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
-            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
-            _shortcutButtons[0] = MakeShortcut("+200", 200);
-            _shortcutButtons[1] = MakeShortcut("+300", 300);
-            _shortcutButtons[2] = MakeShortcut("+500", 500);
-            _shortcutButtons[3] = MakeShortcut("+1000", 1000);
+            _shortcutIncrements = new decimal[] { 50, 100, 200, 300, 500 };
+            _shortcutButtons = new Button[5];
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+            shortcuts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+            _shortcutButtons[0] = MakeShortcut("+50", 50);
+            _shortcutButtons[1] = MakeShortcut("+100", 100);
+            _shortcutButtons[2] = MakeShortcut("+200", 200);
+            _shortcutButtons[3] = MakeShortcut("+300", 300);
+            _shortcutButtons[4] = MakeShortcut("+500", 500);
             shortcuts.Controls.Add(_shortcutButtons[0], 0, 0);
             shortcuts.Controls.Add(_shortcutButtons[1], 1, 0);
             shortcuts.Controls.Add(_shortcutButtons[2], 2, 0);
             shortcuts.Controls.Add(_shortcutButtons[3], 3, 0);
+            shortcuts.Controls.Add(_shortcutButtons[4], 4, 0);
 
-            bidPanel.Controls.Add(_txtBid, 0, 0);
-            bidPanel.Controls.Add(shortcuts, 0, 1);
+            bidPanel.Controls.Add(shortcuts, 0, 2);
             root.Controls.Add(bidPanel, 0, 2);
 
             var actionRow = new TableLayoutPanel
@@ -1668,7 +1742,7 @@ namespace PRSC_Player_Auction_System
                 Text = "PLACE BID",
                 BackColor = _accentColor,
                 ForeColor = Color.Black,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 13F, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat
             };
             btnPlaceBid.FlatAppearance.BorderSize = 0;
@@ -1678,9 +1752,9 @@ namespace PRSC_Player_Auction_System
             {
                 Dock = DockStyle.Fill,
                 Text = string.IsNullOrEmpty(_lastBidderTeam) ? "WAITING FOR OPENING BID" : $"SELL TO {_lastBidderTeam}",
-                BackColor = Color.FromArgb(75, 50, 12),
-                ForeColor = Color.Gold,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                BackColor = Color.FromArgb(64, 49, 20),
+                ForeColor = Color.FromArgb(255, 224, 143),
+                Font = new Font("Segoe UI", 11.5F, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
                 Enabled = !string.IsNullOrEmpty(_lastBidderTeam)
             };
@@ -1701,7 +1775,7 @@ namespace PRSC_Player_Auction_System
                 Dock = DockStyle.Fill,
                 RowCount = 1,
                 ColumnCount = 3,
-                Margin = new Padding(0, 4, 0, 0)
+                Margin = new Padding(0, 6, 0, 0)
             };
             timerControlRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34));
             timerControlRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));
@@ -1711,9 +1785,9 @@ namespace PRSC_Player_Auction_System
             {
                 Dock = DockStyle.Fill,
                 Text = "PAUSE TIMER",
-                BackColor = Color.FromArgb(55, 40, 12),
-                ForeColor = Color.Gold,
-                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                BackColor = Color.FromArgb(68, 56, 22),
+                ForeColor = Color.FromArgb(255, 230, 168),
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
                 Margin = new Padding(0, 0, 6, 0)
             };
@@ -1725,9 +1799,9 @@ namespace PRSC_Player_Auction_System
             {
                 Dock = DockStyle.Fill,
                 Text = $"RESET TO {_timeLimitSeconds}",
-                BackColor = Color.FromArgb(48, 16, 16),
+                BackColor = Color.FromArgb(74, 24, 24),
                 ForeColor = Color.FromArgb(255, 220, 220),
-                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
                 Margin = new Padding(6, 0, 0, 0)
             };
@@ -1739,9 +1813,9 @@ namespace PRSC_Player_Auction_System
             {
                 Dock = DockStyle.Fill,
                 Text = "CUT AUCTION",
-                BackColor = Color.FromArgb(40, 40, 40),
+                BackColor = Color.FromArgb(48, 52, 60),
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
                 Margin = new Padding(6, 0, 0, 0)
             };
@@ -1758,8 +1832,8 @@ namespace PRSC_Player_Auction_System
             {
                 Dock = DockStyle.Fill,
                 Text = "Press Enter to submit this team's bid. Use Pause/Resume or Reset in emergencies. If time expires, the player is auto-sold to the previous bidder.",
-                ForeColor = Color.FromArgb(200, 200, 210),
-                Font = new Font("Segoe UI", 9.5F),
+                ForeColor = Color.FromArgb(188, 195, 208),
+                Font = new Font("Segoe UI", 10F),
                 TextAlign = ContentAlignment.TopLeft
             };
             root.Controls.Add(lblHint, 0, 5);
@@ -1772,17 +1846,76 @@ namespace PRSC_Player_Auction_System
             };
         }
 
+        private Control MakeStatCard(string title, string value, Color valueColor)
+        {
+            return MakeStatCard(
+                title,
+                new Label
+                {
+                    Dock = DockStyle.Fill,
+                    Text = value,
+                    ForeColor = valueColor,
+                    Font = new Font("Segoe UI Semibold", 15F, FontStyle.Bold),
+                    TextAlign = ContentAlignment.MiddleLeft
+                },
+                valueColor);
+        }
+
+        private Control MakeStatCard(string title, Control valueControl, Color accentColor)
+        {
+            var card = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(24, 30, 44),
+                Margin = new Padding(0, 0, 10, 10),
+                Padding = new Padding(14, 12, 14, 12)
+            };
+
+            var cardTitle = new Label
+            {
+                Dock = DockStyle.Top,
+                Height = 22,
+                Text = title,
+                ForeColor = Color.FromArgb(164, 172, 188),
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            var contentHost = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(12, 6, 4, 0)
+            };
+
+            var accent = new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = 4,
+                BackColor = accentColor,
+                Margin = Padding.Empty
+            };
+
+            valueControl.Dock = DockStyle.Fill;
+            contentHost.Controls.Add(valueControl);
+
+            card.Controls.Add(contentHost);
+            card.Controls.Add(cardTitle);
+            card.Controls.Add(accent);
+            return card;
+        }
+
         private Button MakeShortcut(string text, decimal increment)
         {
             var button = new Button
             {
                 Dock = DockStyle.Fill,
                 Text = text,
-                BackColor = Color.FromArgb(34, 34, 46),
+                BackColor = Color.FromArgb(30, 36, 50),
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold),
                 FlatStyle = FlatStyle.Flat,
-                Margin = new Padding(3)
+                Margin = new Padding(5),
+                Height = 68
             };
             button.FlatAppearance.BorderColor = _accentColor;
             button.FlatAppearance.BorderSize = 1;
@@ -1851,7 +1984,7 @@ namespace PRSC_Player_Auction_System
             for (int i = 0; i < _shortcutButtons.Length; i++)
             {
                 bool isSelected = i == _selectedShortcutIndex;
-                _shortcutButtons[i].BackColor = isSelected ? _accentColor : Color.FromArgb(34, 34, 46);
+                _shortcutButtons[i].BackColor = isSelected ? _accentColor : Color.FromArgb(30, 36, 50);
                 _shortcutButtons[i].ForeColor = isSelected ? Color.Black : Color.White;
             }
         }

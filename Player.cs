@@ -8,6 +8,7 @@ namespace PRSC_Player_Auction_System
     public class Player
     {
         public int Id { get; set; }
+        public int DisplayId { get; set; }
         public string Name { get; set; } = "";
         public string Position { get; set; } = "";
         public string SkillLevel { get; set; } = "Medium";
